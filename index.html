@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>U&me</title>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     * {
       box-sizing: border-box;
@@ -18,109 +20,177 @@
     }
 
     .app {
-      max-width: 500px;
-      margin: auto;
+      max-width: 430px;
       min-height: 100vh;
+      margin: auto;
       background: white;
-      padding: 24px 18px;
+      padding: 30px 20px;
     }
 
     .logo {
-      font-size: 32px;
+      font-size: 38px;
       font-weight: 700;
-      margin-bottom: 5px;
+      margin-top: 50px;
+      margin-bottom: 8px;
     }
 
     .subtitle {
       color: #777;
-      margin-bottom: 30px;
+      margin-bottom: 35px;
     }
 
     .card {
-      background: #fafafa;
       border: 1px solid #eee;
-      border-radius: 18px;
-      padding: 20px;
-      margin-bottom: 15px;
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 5px 20px rgba(0,0,0,.04);
     }
 
-    .card h2 {
+    h2 {
       margin-top: 0;
-      font-size: 18px;
     }
 
-    .amount {
-      font-size: 30px;
-      font-weight: bold;
-    }
-
-    .buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 20px;
+    input {
+      width: 100%;
+      padding: 15px;
+      margin: 8px 0;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      font-size: 16px;
     }
 
     button {
-      border: none;
-      border-radius: 14px;
+      width: 100%;
       padding: 15px;
+      margin-top: 10px;
+      border: 0;
+      border-radius: 12px;
       font-size: 16px;
       cursor: pointer;
+      background: #222;
+      color: white;
     }
 
-    .income {
-      background: #e8f7ed;
-      color: #16743a;
+    button.secondary {
+      background: #eee;
+      color: #222;
     }
 
-    .expense {
-      background: #fdeaea;
-      color: #a52b2b;
-    }
-
-    .goal {
-      background: #eeeafd;
-      color: #5142a8;
+    #message {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #777;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="app">
+<div class="app">
 
-    <div class="logo">U&me</div>
-    <div class="subtitle">Our shared space</div>
+  <div class="logo">U&me</div>
+  <div class="subtitle">Our shared space</div>
 
-    <div class="card">
-      <h2>Total Balance</h2>
-      <div class="amount">0 EGP</div>
-    </div>
+  <div class="card">
 
-    <div class="card">
-      <h2>This Month</h2>
+    <h2>Welcome</h2>
 
-      <p>Income</p>
-      <strong>0 EGP</strong>
+    <input id="email" type="email" placeholder="Email">
 
-      <p>Expenses</p>
-      <strong>0 EGP</strong>
-    </div>
+    <input id="password" type="password" placeholder="Password">
 
-    <div class="card">
-      <h2>Our Goal</h2>
-      <p>Start your first saving goal</p>
-      <strong>0 / 0 EGP</strong>
-    </div>
+    <button onclick="signIn()">Login</button>
 
-    <div class="buttons">
-      <button class="income">+ Income</button>
-      <button class="expense">+ Expense</button>
-      <button class="goal">+ Saving Goal</button>
-    </div>
+    <button class="secondary" onclick="signUp()">
+      Create account
+    </button>
+
+    <div id="message"></div>
 
   </div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL =
+"https://foswxvdnekimhkjkefdq.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_LlaYjmDPvzEU97_kr2azhg_jvkgAljS";
+
+const supabaseClient =
+supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+function showMessage(message) {
+  document.getElementById("message").textContent = message;
+}
+
+async function signUp() {
+
+  const email =
+    document.getElementById("email").value.trim();
+
+  const password =
+    document.getElementById("password").value;
+
+  if (!email || !password) {
+    showMessage("Please enter email and password.");
+    return;
+  }
+
+  showMessage("Creating account...");
+
+  const { error } =
+    await supabaseClient.auth.signUp({
+      email: email,
+      password: password
+    });
+
+  if (error) {
+    showMessage(error.message);
+    return;
+  }
+
+  showMessage(
+    "Account created. Check your email if confirmation is required."
+  );
+}
+
+async function signIn() {
+
+  const email =
+    document.getElementById("email").value.trim();
+
+  const password =
+    document.getElementById("password").value;
+
+  if (!email || !password) {
+    showMessage("Please enter email and password.");
+    return;
+  }
+
+  showMessage("Logging in...");
+
+  const { data, error } =
+    await supabaseClient.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+  if (error) {
+    showMessage(error.message);
+    return;
+  }
+
+  showMessage("Login successful!");
+
+}
+
+</script>
 
 </body>
 </html>
