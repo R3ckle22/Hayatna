@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111111">
   <title>U&me</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -10,1663 +11,2224 @@
   <style>
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
       background: #f5f5f5;
-      color: #222;
-    }
-
-    .app {
-      max-width: 480px;
+      color: #111;
       min-height: 100vh;
-      margin: auto;
-      background: #fff;
-      padding: 24px 18px 40px;
     }
 
-    .logo {
-      font-size: 36px;
-      font-weight: 700;
-      margin-top: 15px;
+    button,
+    input,
+    select {
+      font: inherit;
     }
 
-    .subtitle {
-      color: #777;
-      margin: 4px 0 25px;
+    button {
+      cursor: pointer;
     }
 
     .hidden {
       display: none !important;
     }
 
-    .card {
-      background: #fff;
-      border: 1px solid #eee;
-      border-radius: 20px;
+    .container {
+      width: min(1100px, calc(100% - 28px));
+      margin: auto;
+    }
+
+    /* AUTH */
+
+    .auth-wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       padding: 20px;
-      margin-bottom: 15px;
-      box-shadow: 0 5px 20px rgba(0,0,0,.04);
     }
 
-    .balance-card {
-      background: #222;
-      color: white;
+    .auth-card {
+      width: min(420px, 100%);
+      background: white;
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 15px 45px rgba(0,0,0,.08);
     }
 
-    .balance-label {
-      opacity: .7;
-      font-size: 14px;
+    .logo {
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -2px;
+      margin-bottom: 5px;
     }
 
-    .balance {
-      font-size: 36px;
-      font-weight: 700;
-      margin-top: 8px;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .stat {
-      padding: 18px;
-      border-radius: 16px;
-      background: #f7f7f7;
-    }
-
-    .stat-title {
+    .subtitle {
       color: #777;
-      font-size: 13px;
-      margin-bottom: 8px;
-    }
-
-    .stat-value {
-      font-size: 20px;
-      font-weight: 700;
-    }
-
-    .income-text {
-      color: #198754;
-    }
-
-    .expense-text {
-      color: #c0392b;
-    }
-
-    h2 {
-      margin-top: 0;
-      font-size: 19px;
+      margin-bottom: 28px;
     }
 
     input,
     select {
       width: 100%;
-      padding: 14px;
-      margin: 7px 0;
+      padding: 14px 15px;
       border: 1px solid #ddd;
       border-radius: 12px;
-      font-size: 16px;
       background: white;
+      outline: none;
+      margin-bottom: 12px;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #111;
     }
 
     button {
-      width: 100%;
-      padding: 14px;
-      margin-top: 8px;
       border: 0;
       border-radius: 12px;
-      font-size: 16px;
-      cursor: pointer;
-      background: #222;
+      padding: 13px 16px;
+      background: #111;
       color: white;
+      font-weight: 700;
     }
 
     button.secondary {
       background: #eee;
-      color: #222;
+      color: #111;
     }
 
     button.danger {
-      background: #f8dddd;
-      color: #8b2222;
+      background: #e5484d;
     }
 
-    .action-grid {
+    .auth-buttons {
+      display: grid;
+      gap: 10px;
+      margin-top: 5px;
+    }
+
+    .message {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #f1f1f1;
+      color: #555;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* HOUSEHOLD */
+
+    .household-wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .household-card {
+      width: min(500px, 100%);
+      background: white;
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 15px 45px rgba(0,0,0,.08);
+    }
+
+    .divider {
+      height: 1px;
+      background: #eee;
+      margin: 25px 0;
+    }
+
+    .invite-box {
+      background: #f5f5f5;
+      border-radius: 15px;
+      padding: 18px;
+      margin-top: 10px;
+    }
+
+    .invite-code {
+      font-size: 27px;
+      font-weight: 800;
+      letter-spacing: 5px;
+      margin: 8px 0 14px;
+    }
+
+    /* APP */
+
+    .app {
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: white;
+      border-bottom: 1px solid #e8e8e8;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .topbar-inner {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .brand {
+      font-size: 27px;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+    }
+
+    .space-name {
+      color: #777;
+      font-size: 13px;
+      margin-top: 3px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .top-actions button {
+      padding: 9px 12px;
+      font-size: 13px;
+    }
+
+    main {
+      padding: 25px 0 50px;
+    }
+
+    .welcome {
+      margin-bottom: 20px;
+    }
+
+    .welcome h1 {
+      font-size: 28px;
+      margin-bottom: 5px;
+    }
+
+    .welcome p {
+      color: #777;
+    }
+
+    /* MONTH */
+
+    .month-bar {
+      background: white;
+      border-radius: 18px;
+      padding: 15px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,.04);
+    }
+
+    .month-bar label {
+      font-size: 13px;
+      color: #777;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .month-bar input {
+      margin: 0;
+      max-width: 180px;
+    }
+
+    .month-note {
+      color: #777;
+      font-size: 13px;
+    }
+
+    /* STATS */
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 18px;
+    }
+
+    .stat {
+      background: white;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 5px 20px rgba(0,0,0,.04);
+    }
+
+    .stat-label {
+      color: #777;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .stat-value {
+      font-size: 25px;
+      font-weight: 800;
+    }
+
+    .stat-small {
+      color: #999;
+      font-size: 12px;
+      margin-top: 7px;
+    }
+
+    .positive {
+      color: #198754;
+    }
+
+    .negative {
+      color: #d93025;
+    }
+
+    /* GRID */
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 5px 20px rgba(0,0,0,.04);
+    }
+
+    .card h2 {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .card-subtitle {
+      color: #888;
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    /* FORMS */
+
+    .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
 
-    .goal {
-      border: 1px solid #eee;
-      border-radius: 16px;
-      padding: 16px;
-      margin-top: 12px;
+    .form-grid .full {
+      grid-column: 1 / -1;
     }
 
-    .goal-name {
+    .form-grid button {
+      width: 100%;
+    }
+
+    /* CATEGORY */
+
+    .category-row {
+      margin-bottom: 17px;
+    }
+
+    .category-head {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 7px;
+      font-size: 13px;
+    }
+
+    .category-name {
       font-weight: 700;
-      font-size: 17px;
     }
 
-    .goal-amount {
-      margin-top: 7px;
-      color: #666;
+    .category-value {
+      color: #777;
     }
 
-    .progress {
+    .bar {
       height: 9px;
       background: #eee;
       border-radius: 20px;
       overflow: hidden;
-      margin: 12px 0;
     }
 
-    .progress-bar {
+    .bar-fill {
       height: 100%;
-      width: 0%;
-      background: #222;
+      background: #111;
       border-radius: 20px;
     }
 
-    .item {
-      border-bottom: 1px solid #eee;
-      padding: 12px 0;
+    .empty {
+      color: #999;
+      font-size: 14px;
+      padding: 15px 0;
     }
 
-    .item:last-child {
+    /* GOALS */
+
+    .goal {
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .goal:first-child {
+      padding-top: 0;
+    }
+
+    .goal:last-child {
       border-bottom: 0;
     }
 
-    .item-top {
+    .goal-head {
       display: flex;
       justify-content: space-between;
-      gap: 10px;
+      gap: 15px;
+      margin-bottom: 9px;
     }
 
-    .item-note {
-      color: #777;
+    .goal-name {
+      font-weight: 800;
+    }
+
+    .goal-amount {
       font-size: 13px;
-      margin-top: 4px;
+      color: #777;
     }
 
-    .empty {
+    .goal-bar {
+      height: 10px;
+      background: #eee;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .goal-fill {
+      height: 100%;
+      background: #111;
+      border-radius: 20px;
+    }
+
+    .goal-footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 12px;
       color: #888;
+    }
+
+    /* TRANSACTIONS */
+
+    .transaction {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 13px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .transaction:last-child {
+      border-bottom: 0;
+    }
+
+    .transaction-title {
+      font-weight: 700;
       font-size: 14px;
     }
 
-    .code {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: 4px;
-      text-align: center;
-      background: #f5f5f5;
-      padding: 14px;
-      border-radius: 12px;
-      margin: 12px 0;
+    .transaction-date {
+      color: #999;
+      font-size: 12px;
+      margin-top: 4px;
     }
 
-    #message {
-      margin: 12px 0;
-      color: #666;
-      line-height: 1.5;
+    .income {
+      color: #198754;
+      font-weight: 800;
     }
 
-    .section-title {
-      margin: 25px 0 12px;
-      font-size: 21px;
+    .expense {
+      color: #d93025;
+      font-weight: 800;
+    }
+
+    /* INVITE */
+
+    .invite-small {
+      background: #f6f6f6;
+      border-radius: 14px;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .invite-small-code {
+      font-weight: 800;
+      letter-spacing: 3px;
+    }
+
+    /* MODAL */
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 50;
+    }
+
+    .modal-card {
+      width: min(430px, 100%);
+      background: white;
+      border-radius: 22px;
+      padding: 25px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 5px;
+    }
+
+    .modal-actions button {
+      flex: 1;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 850px) {
+      .stats {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        width: min(100% - 20px, 1100px);
+      }
+
+      .topbar-inner {
+        min-height: 65px;
+      }
+
+      .brand {
+        font-size: 24px;
+      }
+
+      .top-actions button {
+        padding: 8px 9px;
+      }
+
+      main {
+        padding-top: 18px;
+      }
+
+      .stats {
+        gap: 10px;
+      }
+
+      .stat {
+        padding: 15px;
+      }
+
+      .stat-value {
+        font-size: 20px;
+      }
+
+      .month-bar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .month-bar input {
+        max-width: 100%;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-grid .full {
+        grid-column: auto;
+      }
     }
   </style>
 </head>
 
 <body>
 
-<div class="app">
+  <!-- AUTH SCREEN -->
+  <section id="authScreen" class="auth-wrapper">
+    <div class="auth-card">
+      <div class="logo">U&me</div>
+      <div class="subtitle">Your shared financial space.</div>
 
-  <div class="logo">U&me</div>
-  <div class="subtitle">Our shared space</div>
+      <input id="email" type="email" placeholder="Email">
+      <input id="password" type="password" placeholder="Password">
 
-  <!-- AUTH -->
-
-  <div id="authScreen">
-
-    <div class="card">
-
-      <h2>Welcome</h2>
-
-      <input
-        id="email"
-        type="email"
-        placeholder="Email"
-      >
-
-      <input
-        id="password"
-        type="password"
-        placeholder="Password"
-      >
-
-      <button onclick="signIn()">
-        Login
-      </button>
-
-      <button class="secondary" onclick="signUp()">
-        Create account
-      </button>
-
-    </div>
-
-  </div>
-
-
-  <!-- HOUSEHOLD -->
-
-  <div id="householdScreen" class="hidden">
-
-    <div class="card">
-
-      <h2>Create our space</h2>
-
-      <input
-        id="displayName"
-        type="text"
-        placeholder="Your name"
-      >
-
-      <button onclick="createHousehold()">
-        Create U&me Space
-      </button>
-
-    </div>
-
-    <div class="card">
-
-      <h2>Join a space</h2>
-
-      <input
-        id="joinName"
-        type="text"
-        placeholder="Your name"
-      >
-
-      <input
-        id="inviteCode"
-        type="text"
-        placeholder="Invite code"
-      >
-
-      <button onclick="joinHousehold()">
-        Join U&me Space
-      </button>
-
-    </div>
-
-    <button class="danger" onclick="logout()">
-      Logout
-    </button>
-
-  </div>
-
-
-  <!-- HOME -->
-
-  <div id="homeScreen" class="hidden">
-
-    <div class="card balance-card">
-
-      <div class="balance-label">
-        Current Balance
+      <div class="auth-buttons">
+        <button onclick="signIn()">Log in</button>
+        <button class="secondary" onclick="signUp()">Create account</button>
       </div>
 
-      <div class="balance" id="balance">
-        0 EGP
+      <div id="authMessage" class="message hidden"></div>
+    </div>
+  </section>
+
+
+  <!-- HOUSEHOLD SCREEN -->
+  <section id="householdScreen" class="household-wrapper hidden">
+    <div class="household-card">
+      <div class="logo">U&me</div>
+      <div class="subtitle">Create your shared space or join your partner.</div>
+
+      <h3>Create a new space</h3>
+
+      <input id="displayNameCreate" placeholder="Your name">
+      <input id="spaceName" placeholder="Space name, e.g. Mohammed & Yasmin">
+
+      <button onclick="createHousehold()" style="width:100%;">
+        Create shared space
+      </button>
+
+      <div class="divider"></div>
+
+      <h3>Join an existing space</h3>
+
+      <input id="displayNameJoin" placeholder="Your name">
+      <input id="inviteCode" placeholder="Invite code">
+
+      <button onclick="joinHousehold()" style="width:100%;">
+        Join shared space
+      </button>
+
+      <div id="householdMessage" class="message hidden"></div>
+
+      <button class="secondary" onclick="logout()" style="width:100%; margin-top:15px;">
+        Log out
+      </button>
+    </div>
+  </section>
+
+
+  <!-- APP -->
+  <section id="homeScreen" class="app hidden">
+
+    <header class="topbar">
+      <div class="container topbar-inner">
+
+        <div>
+          <div class="brand">U&me</div>
+          <div id="spaceNameDisplay" class="space-name">
+            Our shared space
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <button class="secondary" onclick="openGoalModal()">
+            + Goal
+          </button>
+
+          <button class="secondary" onclick="logout()">
+            Log out
+          </button>
+        </div>
+
       </div>
+    </header>
 
-    </div>
 
+    <main>
+      <div class="container">
 
-    <div class="stats">
-
-      <div class="stat">
-        <div class="stat-title">
-          Total Income
+        <div class="welcome">
+          <h1>Financial Dashboard</h1>
+          <p>See where your money is going and how close you are to your goals.</p>
         </div>
 
-        <div
-          class="stat-value income-text"
-          id="totalIncome"
-        >
-          0 EGP
+
+        <!-- MONTH -->
+        <div class="month-bar">
+
+          <div>
+            <label>Selected month</label>
+            <input id="monthPicker" type="month" onchange="refreshData()">
+          </div>
+
+          <div class="month-note">
+            Dashboard calculations are based on the selected month.
+          </div>
+
         </div>
+
+
+        <!-- STATS -->
+        <div class="stats">
+
+          <div class="stat">
+            <div class="stat-label">Monthly income</div>
+            <div id="monthlyIncome" class="stat-value">0 EGP</div>
+            <div class="stat-small">Total income this month</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">Monthly expenses</div>
+            <div id="monthlyExpenses" class="stat-value">0 EGP</div>
+            <div class="stat-small">Total spending this month</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">Remaining</div>
+            <div id="monthlyRemaining" class="stat-value">0 EGP</div>
+            <div class="stat-small">Income minus expenses</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat-label">Saving rate</div>
+            <div id="savingRate" class="stat-value">0%</div>
+            <div class="stat-small">Based on this month's income</div>
+          </div>
+
+        </div>
+
+
+        <!-- ADD MONEY -->
+        <div class="grid">
+
+          <div class="card">
+
+            <h2>Add income</h2>
+            <div class="card-subtitle">
+              Add salary, freelance work, bonus or any other income.
+            </div>
+
+            <div class="form-grid">
+
+              <input
+                id="incomeAmount"
+                type="number"
+                min="0"
+                placeholder="Amount"
+              >
+
+              <input
+                id="incomeSource"
+                placeholder="Source, e.g. Salary"
+              >
+
+              <button
+                class="full"
+                onclick="addIncome()"
+              >
+                + Add income
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <div class="card">
+
+            <h2>Add expense</h2>
+            <div class="card-subtitle">
+              Track where your money goes.
+            </div>
+
+            <div class="form-grid">
+
+              <input
+                id="expenseAmount"
+                type="number"
+                min="0"
+                placeholder="Amount"
+              >
+
+              <select id="expenseCategory">
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Home">Home</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Bills">Bills</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Health">Health</option>
+                <option value="Family">Family</option>
+                <option value="Other">Other</option>
+              </select>
+
+              <input
+                id="expenseDescription"
+                class="full"
+                placeholder="Description"
+              >
+
+              <button
+                class="full"
+                onclick="addExpense()"
+              >
+                + Add expense
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- ANALYSIS -->
+        <div class="grid">
+
+          <div class="card">
+
+            <h2>Spending analysis</h2>
+            <div class="card-subtitle">
+              Where your money went this month.
+            </div>
+
+            <div id="categoryAnalysis">
+              <div class="empty">
+                No expenses for this month yet.
+              </div>
+            </div>
+
+          </div>
+
+
+          <div class="card">
+
+            <h2>Saving goals</h2>
+            <div class="card-subtitle">
+              Track the progress of your shared goals.
+            </div>
+
+            <div id="goalsList">
+              <div class="empty">
+                No saving goals yet.
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- TRANSACTIONS -->
+        <div class="card" style="margin-bottom:18px;">
+
+          <h2>Recent transactions</h2>
+          <div class="card-subtitle">
+            Income and expenses for the selected month.
+          </div>
+
+          <div id="transactionsList">
+            <div class="empty">
+              No transactions yet.
+            </div>
+          </div>
+
+        </div>
+
+
+        <!-- INVITE -->
+        <div class="card">
+
+          <h2>Shared space</h2>
+
+          <div class="card-subtitle">
+            Share this code with your partner to join this space.
+          </div>
+
+          <div class="invite-small">
+
+            <div>
+              <div class="space-name">Invite code</div>
+              <div id="inviteCodeDisplay" class="invite-small-code">
+                ------
+              </div>
+            </div>
+
+            <button onclick="copyInviteCode()">
+              Copy
+            </button>
+
+          </div>
+
+        </div>
+
       </div>
+    </main>
+
+  </section>
 
 
-      <div class="stat">
-        <div class="stat-title">
-          Total Expenses
-        </div>
+  <!-- GOAL MODAL -->
+  <div id="goalModal" class="modal hidden">
 
-        <div
-          class="stat-value expense-text"
-          id="totalExpenses"
-        >
-          0 EGP
-        </div>
+    <div class="modal-card">
+
+      <h2>Create saving goal</h2>
+
+      <div class="card-subtitle">
+        Example: Wedding, New Laptop, Vacation...
       </div>
-
-    </div>
-
-
-    <div class="section-title">
-      Quick Add
-    </div>
-
-    <div class="action-grid">
-
-      <button onclick="showForm('incomeForm')">
-        + Income
-      </button>
-
-      <button onclick="showForm('expenseForm')">
-        + Expense
-      </button>
-
-      <button
-        class="secondary"
-        onclick="showForm('goalForm')"
-      >
-        + Saving Goal
-      </button>
-
-      <button
-        class="secondary"
-        onclick="refreshData()"
-      >
-        ↻ Refresh
-      </button>
-
-    </div>
-
-
-    <!-- INCOME FORM -->
-
-    <div
-      id="incomeForm"
-      class="card hidden"
-    >
-
-      <h2>Add Income</h2>
-
-      <input
-        id="incomeAmount"
-        type="number"
-        min="0"
-        placeholder="Amount in EGP"
-      >
-
-      <input
-        id="incomeSource"
-        type="text"
-        placeholder="Source"
-      >
-
-      <input
-        id="incomeNote"
-        type="text"
-        placeholder="Note (optional)"
-      >
-
-      <button onclick="addIncome()">
-        Save Income
-      </button>
-
-      <button
-        class="secondary"
-        onclick="hideForms()"
-      >
-        Cancel
-      </button>
-
-    </div>
-
-
-    <!-- EXPENSE FORM -->
-
-    <div
-      id="expenseForm"
-      class="card hidden"
-    >
-
-      <h2>Add Expense</h2>
-
-      <input
-        id="expenseAmount"
-        type="number"
-        min="0"
-        placeholder="Amount in EGP"
-      >
-
-      <select id="expenseCategory">
-
-        <option value="">
-          Select category
-        </option>
-
-        <option value="Food">
-          Food
-        </option>
-
-        <option value="Transport">
-          Transport
-        </option>
-
-        <option value="Bills">
-          Bills
-        </option>
-
-        <option value="Shopping">
-          Shopping
-        </option>
-
-        <option value="Home">
-          Home
-        </option>
-
-        <option value="Entertainment">
-          Entertainment
-        </option>
-
-        <option value="Other">
-          Other
-        </option>
-
-      </select>
-
-      <input
-        id="expenseNote"
-        type="text"
-        placeholder="Note (optional)"
-      >
-
-      <button onclick="addExpense()">
-        Save Expense
-      </button>
-
-      <button
-        class="secondary"
-        onclick="hideForms()"
-      >
-        Cancel
-      </button>
-
-    </div>
-
-
-    <!-- GOAL FORM -->
-
-    <div
-      id="goalForm"
-      class="card hidden"
-    >
-
-      <h2>New Saving Goal</h2>
 
       <input
         id="goalName"
-        type="text"
         placeholder="Goal name"
       >
 
       <input
         id="goalTarget"
         type="number"
-        min="1"
-        placeholder="Target amount in EGP"
+        min="0"
+        placeholder="Target amount"
       >
 
-      <input
-        id="goalDate"
-        type="date"
-      >
+      <div class="modal-actions">
+        <button class="secondary" onclick="closeGoalModal()">
+          Cancel
+        </button>
 
-      <button onclick="addGoal()">
-        Create Goal
-      </button>
-
-      <button
-        class="secondary"
-        onclick="hideForms()"
-      >
-        Cancel
-      </button>
-
-    </div>
-
-
-    <!-- GOALS -->
-
-    <div class="section-title">
-      Our Saving Goals
-    </div>
-
-    <div id="goalsList">
-      <div class="empty">
-        No goals yet.
-      </div>
-    </div>
-
-
-    <!-- RECENT TRANSACTIONS -->
-
-    <div class="section-title">
-      Recent Transactions
-    </div>
-
-    <div id="transactionsList">
-      <div class="empty">
-        No transactions yet.
-      </div>
-    </div>
-
-
-    <div class="card" style="margin-top:25px;">
-
-      <h2>Our Space</h2>
-
-      <p>
-        Invite Code:
-      </p>
-
-      <div
-        class="code"
-        id="myInviteCode"
-      >
-        ------
+        <button onclick="addGoal()">
+          Create goal
+        </button>
       </div>
 
-      <button
-        class="secondary"
-        onclick="copyInviteCode()"
-      >
-        Copy Invite Code
-      </button>
-
     </div>
-
-
-    <button
-      class="danger"
-      onclick="logout()"
-    >
-      Logout
-    </button>
 
   </div>
 
 
-  <div id="message"></div>
-
-</div>
-
-
 <script>
 
-const SUPABASE_URL =
-"https://foswxvdnekimhkjkefdq.supabase.co";
+  /* =========================
+     SUPABASE
+  ========================= */
 
-const SUPABASE_KEY =
-"sb_publishable_LlaYjmDPvzEU97_kr2azhg_jvkgAljS";
+  const SUPABASE_URL =
+    "https://foswxvdnekimhkjkefdq.supabase.co";
 
-const supabaseClient =
-supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+  const SUPABASE_KEY =
+    "sb_publishable_LlaYjmDPvzEU97_kr2azhg_jvkgAljS";
 
-let currentUser = null;
-let currentHousehold = null;
-let currentMember = null;
-
-
-function showMessage(message) {
-
-  document.getElementById("message")
-    .textContent = message;
-
-}
-
-
-function showScreen(screen) {
-
-  document.getElementById("authScreen")
-    .classList.add("hidden");
-
-  document.getElementById("householdScreen")
-    .classList.add("hidden");
-
-  document.getElementById("homeScreen")
-    .classList.add("hidden");
-
-  document.getElementById(screen)
-    .classList.remove("hidden");
-
-}
-
-
-function showForm(id) {
-
-  hideForms();
-
-  document.getElementById(id)
-    .classList.remove("hidden");
-
-}
-
-
-function hideForms() {
-
-  document.getElementById("incomeForm")
-    .classList.add("hidden");
-
-  document.getElementById("expenseForm")
-    .classList.add("hidden");
-
-  document.getElementById("goalForm")
-    .classList.add("hidden");
-
-}
-
-
-function money(value) {
-
-  return Number(value || 0)
-    .toLocaleString("en-US", {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2
-    }) + " EGP";
-
-}
-
-
-/* AUTH */
-
-async function signUp() {
-
-  const email =
-    document.getElementById("email")
-      .value.trim();
-
-  const password =
-    document.getElementById("password")
-      .value;
-
-  if (!email || !password) {
-
-    showMessage(
-      "Enter email and password."
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
     );
 
-    return;
+
+  /* =========================
+     STATE
+  ========================= */
+
+  let currentUser = null;
+  let currentHousehold = null;
+  let currentMember = null;
+
+  let incomes = [];
+  let expenses = [];
+  let goals = [];
+
+
+  /* =========================
+     HELPERS
+  ========================= */
+
+  function showMessage(id, message) {
+    const el = document.getElementById(id);
+
+    el.textContent = message;
+    el.classList.remove("hidden");
   }
 
-  showMessage("Creating account...");
 
-  const { error } =
-    await supabaseClient.auth.signUp({
-      email,
-      password
-    });
-
-  if (error) {
-
-    showMessage(error.message);
-
-    return;
+  function hideMessage(id) {
+    document.getElementById(id).classList.add("hidden");
   }
 
-  showMessage(
-    "Account created. Check your email if confirmation is required."
-  );
 
-}
-
-
-async function signIn() {
-
-  const email =
-    document.getElementById("email")
-      .value.trim();
-
-  const password =
-    document.getElementById("password")
-      .value;
-
-  if (!email || !password) {
-
-    showMessage(
-      "Enter email and password."
-    );
-
-    return;
+  function money(value) {
+    return Number(value || 0).toLocaleString("en-US") + " EGP";
   }
 
-  showMessage("Logging in...");
 
-  const { data, error } =
-    await supabaseClient.auth
-      .signInWithPassword({
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+
+  function selectedMonthRange() {
+
+    const picker =
+      document.getElementById("monthPicker");
+
+    const value = picker.value;
+
+    if (!value) {
+      const now = new Date();
+
+      return {
+        start:
+          new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            1
+          ).toISOString(),
+
+        end:
+          new Date(
+            now.getFullYear(),
+            now.getMonth() + 1,
+            1
+          ).toISOString()
+      };
+    }
+
+    const [year, month] =
+      value.split("-").map(Number);
+
+    return {
+      start:
+        new Date(
+          year,
+          month - 1,
+          1
+        ).toISOString(),
+
+      end:
+        new Date(
+          year,
+          month,
+          1
+        ).toISOString()
+    };
+  }
+
+
+  function setCurrentMonth() {
+
+    const now = new Date();
+
+    const month =
+      String(now.getMonth() + 1).padStart(2, "0");
+
+    const value =
+      `${now.getFullYear()}-${month}`;
+
+    document.getElementById("monthPicker").value =
+      value;
+  }
+
+
+  /* =========================
+     AUTH
+  ========================= */
+
+  async function signUp() {
+
+    const email =
+      document.getElementById("email").value.trim();
+
+    const password =
+      document.getElementById("password").value;
+
+    if (!email || !password) {
+      showMessage(
+        "authMessage",
+        "Please enter your email and password."
+      );
+      return;
+    }
+
+    const { data, error } =
+      await supabaseClient.auth.signUp({
         email,
         password
       });
 
-  if (error) {
-
-    showMessage(error.message);
-
-    return;
-  }
-
-  currentUser = data.user;
-
-  await loadUserState();
-
-}
-
-
-/* USER STATE */
-
-async function loadUserState() {
-
-  if (!currentUser) return;
-
-  const { data, error } =
-    await supabaseClient
-      .from("household_members")
-      .select(`
-        household_id,
-        display_name,
-        role,
-        households (
-          id,
-          name,
-          invite_code
-        )
-      `)
-      .eq("user_id", currentUser.id)
-      .limit(1);
-
-  if (error) {
-
-    showMessage(error.message);
-
-    return;
-  }
-
-  if (!data || data.length === 0) {
-
-    showScreen("householdScreen");
-
-    showMessage(
-      "Create a new U&me space or join your partner's space."
-    );
-
-    return;
-  }
-
-  currentMember = data[0];
-
-  currentHousehold =
-    currentMember.households;
-
-  document.getElementById("myInviteCode")
-    .textContent =
-    currentHousehold.invite_code;
-
-  showScreen("homeScreen");
-
-  await refreshData();
-
-}
-
-
-/* CREATE HOUSEHOLD */
-
-async function createHousehold() {
-
-  const name =
-    document.getElementById("displayName")
-      .value.trim();
-
-  if (!name) {
-
-    showMessage("Enter your name.");
-
-    return;
-  }
-
-  showMessage(
-    "Creating your U&me space..."
-  );
-
-  const inviteCode =
-    Math.random()
-      .toString(36)
-      .substring(2, 8)
-      .toUpperCase();
-
-  const { data: household, error } =
-    await supabaseClient
-      .from("households")
-      .insert({
-        name: "U&me",
-        invite_code: inviteCode,
-        created_by: currentUser.id
-      })
-      .select()
-      .single();
-
-  if (error) {
-
-    showMessage(error.message);
-
-    return;
-  }
-
-  const { data: member, error: memberError } =
-    await supabaseClient
-      .from("household_members")
-      .insert({
-        household_id: household.id,
-        user_id: currentUser.id,
-        display_name: name,
-        role: "owner"
-      })
-      .select()
-      .single();
-
-  if (memberError) {
-
-    showMessage(memberError.message);
-
-    return;
-  }
-
-  currentHousehold = household;
-  currentMember = member;
-
-  document.getElementById("myInviteCode")
-    .textContent =
-    household.invite_code;
-
-  showScreen("homeScreen");
-
-  showMessage(
-    "Your U&me space is ready!"
-  );
-
-  await refreshData();
-
-}
-
-
-/* JOIN */
-
-async function joinHousehold() {
-
-  const name =
-    document.getElementById("joinName")
-      .value.trim();
-
-  const code =
-    document.getElementById("inviteCode")
-      .value.trim()
-      .toUpperCase();
-
-  if (!name || !code) {
-
-    showMessage(
-      "Enter your name and invite code."
-    );
-
-    return;
-  }
-
-  showMessage("Joining U&me space...");
-
-  const { data, error } =
-    await supabaseClient.rpc(
-      "join_household_by_invite_code",
-      {
-        p_invite_code: code,
-        p_display_name: name
-      }
-    );
-
-  if (error) {
-
-    showMessage(error.message);
-
-    return;
-  }
-
-  currentHousehold = {
-    id: data.household_id,
-    name: data.household_name,
-    invite_code: code
-  };
-
-  showScreen("homeScreen");
-
-  document.getElementById("myInviteCode")
-    .textContent = code;
-
-  showMessage(
-    "You joined the U&me space!"
-  );
-
-  await refreshData();
-
-}
-
-
-/* INCOME */
-
-async function addIncome() {
-
-  const amount =
-    Number(
-      document.getElementById("incomeAmount")
-        .value
-    );
-
-  const source =
-    document.getElementById("incomeSource")
-      .value.trim();
-
-  const note =
-    document.getElementById("incomeNote")
-      .value.trim();
-
-  if (!amount || amount <= 0) {
-
-    showMessage(
-      "Enter a valid income amount."
-    );
-
-    return;
-  }
-
-  const { error } =
-    await supabaseClient
-      .from("incomes")
-      .insert({
-        household_id: currentHousehold.id,
-        user_id: currentUser.id,
-        amount,
-        source,
-        note,
-        income_date:
-          new Date()
-            .toISOString()
-            .slice(0, 10)
-      });
-
-  if (error) {
-
-    showMessage(error.message);
-
-    return;
-  }
-
-  document.getElementById("incomeAmount")
-    .value = "";
-
-  document.getElementById("incomeSource")
-    .value = "";
-
-  document.getElementById("incomeNote")
-    .value = "";
-
-  hideForms();
-
-  showMessage("Income saved successfully.");
-
-  await refreshData();
-
-}
-
-
-/* EXPENSE */
-
-async function addExpense() {
-
-  const amount =
-    Number(
-      document.getElementById("expenseAmount")
-        .value
-    );
-
-  const category =
-    document.getElementById("expenseCategory")
-      .value;
-
-  const note =
-    document.getElementById("expenseNote")
-      .value.trim();
-
-  if (!amount || amount <= 0) {
-
-    showMessage(
-      "Enter a valid expense amount."
-    );
-
-    return;
-  }
-
-  if (!category) {
-
-    showMessage(
-      "Choose an expense category."
-    );
-
-    return;
-  }
-
-  const { error } =
-    await supabaseClient
-      .from("expenses")
-      .insert({
-        household_id: currentHousehold.id,
-        user_id: currentUser.id,
-        amount,
-        category,
-        note,
-        paid_by:
-          currentMember?.display_name || "",
-        expense_date:
-          new Date()
-            .toISOString()
-            .slice(0, 10)
-      });
-
-  if (error) {
-
-    showMessage(error.message);
-
-    return;
-  }
-
-  document.getElementById("expenseAmount")
-    .value = "";
-
-  document.getElementById("expenseCategory")
-    .value = "";
-
-  document.getElementById("expenseNote")
-    .value = "";
-
-  hideForms();
-
-  showMessage(
-    "Expense saved successfully."
-  );
-
-  await refreshData();
-
-}
-
-
-/* GOAL */
-
-async function addGoal() {
-
-  const name =
-    document.getElementById("goalName")
-      .value.trim();
-
-  const target =
-    Number(
-      document.getElementById("goalTarget")
-        .value
-    );
-
-  const targetDate =
-    document.getElementById("goalDate")
-      .value || null;
-
-  if (!name) {
-
-    showMessage(
-      "Enter a goal name."
-    );
-
-    return;
-  }
-
-  if (!target || target <= 0) {
-
-    showMessage(
-      "Enter a valid target amount."
-    );
-
-    return;
-  }
-
-  const { error } =
-    await supabaseClient
-      .from("goals")
-      .insert({
-        household_id: currentHousehold.id,
-        name,
-        target_amount: target,
-        saved_amount: 0,
-        target_date: targetDate
-      });
-
-  if (error) {
-
-    showMessage(error.message);
-
-    return;
-  }
-
-  document.getElementById("goalName")
-    .value = "";
-
-  document.getElementById("goalTarget")
-    .value = "";
-
-  document.getElementById("goalDate")
-    .value = "";
-
-  hideForms();
-
-  showMessage(
-    "Saving goal created."
-  );
-
-  await refreshData();
-
-}
-
-
-/* ADD SAVING */
-
-async function addSaving(goalId, currentSaved) {
-
-  const amountText =
-    prompt(
-      "How much do you want to add to this goal?"
-    );
-
-  if (amountText === null) return;
-
-  const amount =
-    Number(amountText);
-
-  if (!amount || amount <= 0) {
-
-    showMessage(
-      "Enter a valid amount."
-    );
-
-    return;
-  }
-
-  const newSaved =
-    Number(currentSaved) + amount;
-
-  const { error: contributionError } =
-    await supabaseClient
-      .from("goal_contributions")
-      .insert({
-        goal_id: goalId,
-        household_id: currentHousehold.id,
-        user_id: currentUser.id,
-        amount,
-        contribution_date:
-          new Date()
-            .toISOString()
-            .slice(0, 10)
-      });
-
-  if (contributionError) {
-
-    showMessage(
-      contributionError.message
-    );
-
-    return;
-  }
-
-  const { error } =
-    await supabaseClient
-      .from("goals")
-      .update({
-        saved_amount: newSaved
-      })
-      .eq("id", goalId)
-      .eq(
-        "household_id",
-        currentHousehold.id
+    if (error) {
+      showMessage(
+        "authMessage",
+        error.message
+      );
+      return;
+    }
+
+    if (!data.session) {
+
+      showMessage(
+        "authMessage",
+        "Account created. Check your email if confirmation is required, then log in."
       );
 
-  if (error) {
-
-    showMessage(error.message);
-
-    return;
-  }
-
-  showMessage(
-    "Saving added successfully."
-  );
-
-  await refreshData();
-
-}
-
-
-/* LOAD DATA */
-
-async function refreshData() {
-
-  if (!currentHousehold) return;
-
-  showMessage("Updating...");
-
-  const [
-    incomesResult,
-    expensesResult,
-    goalsResult
-  ] = await Promise.all([
-
-    supabaseClient
-      .from("incomes")
-      .select("*")
-      .eq(
-        "household_id",
-        currentHousehold.id
-      )
-      .order(
-        "income_date",
-        { ascending: false }
-      ),
-
-    supabaseClient
-      .from("expenses")
-      .select("*")
-      .eq(
-        "household_id",
-        currentHousehold.id
-      )
-      .order(
-        "expense_date",
-        { ascending: false }
-      ),
-
-    supabaseClient
-      .from("goals")
-      .select("*")
-      .eq(
-        "household_id",
-        currentHousehold.id
-      )
-      .order(
-        "created_at",
-        { ascending: false }
-      )
-
-  ]);
-
-
-  if (incomesResult.error) {
+      return;
+    }
 
     showMessage(
-      incomesResult.error.message
+      "authMessage",
+      "Account created successfully."
     );
-
-    return;
   }
 
 
-  if (expensesResult.error) {
+  async function signIn() {
 
-    showMessage(
-      expensesResult.error.message
-    );
+    const email =
+      document.getElementById("email").value.trim();
 
-    return;
+    const password =
+      document.getElementById("password").value;
+
+    if (!email || !password) {
+      showMessage(
+        "authMessage",
+        "Please enter your email and password."
+      );
+      return;
+    }
+
+    const { error } =
+      await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+    if (error) {
+      showMessage(
+        "authMessage",
+        error.message
+      );
+      return;
+    }
+
+    hideMessage("authMessage");
+
+    await loadUserState();
   }
 
 
-  if (goalsResult.error) {
+  async function logout() {
 
-    showMessage(
-      goalsResult.error.message
-    );
+    await supabaseClient.auth.signOut();
 
-    return;
+    currentUser = null;
+    currentHousehold = null;
+    currentMember = null;
+
+    showScreen("authScreen");
   }
 
 
-  const incomes =
-    incomesResult.data || [];
+  /* =========================
+     SCREEN
+  ========================= */
 
-  const expenses =
-    expensesResult.data || [];
+  function showScreen(id) {
 
-  const goals =
-    goalsResult.data || [];
+    document
+      .getElementById("authScreen")
+      .classList.add("hidden");
 
+    document
+      .getElementById("householdScreen")
+      .classList.add("hidden");
 
-  const totalIncome =
-    incomes.reduce(
-      (sum, item) =>
-        sum + Number(item.amount),
-      0
-    );
+    document
+      .getElementById("homeScreen")
+      .classList.add("hidden");
 
-
-  const totalExpenses =
-    expenses.reduce(
-      (sum, item) =>
-        sum + Number(item.amount),
-      0
-    );
-
-
-  const balance =
-    totalIncome - totalExpenses;
-
-
-  document.getElementById("totalIncome")
-    .textContent =
-    money(totalIncome);
-
-
-  document.getElementById("totalExpenses")
-    .textContent =
-    money(totalExpenses);
-
-
-  document.getElementById("balance")
-    .textContent =
-    money(balance);
-
-
-  renderGoals(goals);
-
-  renderTransactions(
-    incomes,
-    expenses
-  );
-
-
-  showMessage("");
-
-}
-
-
-/* GOALS UI */
-
-function renderGoals(goals) {
-
-  const container =
-    document.getElementById("goalsList");
-
-  if (!goals.length) {
-
-    container.innerHTML =
-      '<div class="empty">No goals yet.</div>';
-
-    return;
+    document
+      .getElementById(id)
+      .classList.remove("hidden");
   }
 
 
-  container.innerHTML =
-    goals.map(goal => {
+  /* =========================
+     LOAD USER
+  ========================= */
 
-      const target =
-        Number(goal.target_amount);
+  async function loadUserState() {
 
-      const saved =
-        Number(goal.saved_amount);
+    const {
+      data: {
+        user
+      }
+    } =
+      await supabaseClient.auth.getUser();
 
-      const percentage =
-        Math.min(
-          100,
-          target > 0
-            ? (saved / target) * 100
-            : 0
+    if (!user) {
+      showScreen("authScreen");
+      return;
+    }
+
+    currentUser = user;
+
+    const {
+      data: membership,
+      error
+    } =
+      await supabaseClient
+        .from("household_members")
+        .select(`
+          *,
+          households (
+            id,
+            name,
+            invite_code
+          )
+        `)
+        .eq("user_id", user.id)
+        .limit(1)
+        .maybeSingle();
+
+    if (error) {
+      console.error(error);
+
+      showMessage(
+        "authMessage",
+        error.message
+      );
+
+      showScreen("authScreen");
+
+      return;
+    }
+
+    if (!membership) {
+
+      showScreen("householdScreen");
+
+      return;
+    }
+
+    currentMember = membership;
+    currentHousehold = membership.households;
+
+    document.getElementById(
+      "spaceNameDisplay"
+    ).textContent =
+      currentHousehold.name || "Our shared space";
+
+    document.getElementById(
+      "inviteCodeDisplay"
+    ).textContent =
+      currentHousehold.invite_code || "------";
+
+    setCurrentMonth();
+
+    showScreen("homeScreen");
+
+    await refreshData();
+  }
+
+
+  /* =========================
+     HOUSEHOLD
+  ========================= */
+
+  async function createHousehold() {
+
+    const displayName =
+      document
+        .getElementById("displayNameCreate")
+        .value.trim();
+
+    const spaceName =
+      document
+        .getElementById("spaceName")
+        .value.trim();
+
+    if (!displayName || !spaceName) {
+
+      showMessage(
+        "householdMessage",
+        "Please enter your name and space name."
+      );
+
+      return;
+    }
+
+    const inviteCode =
+      Math.random()
+        .toString(36)
+        .substring(2, 8)
+        .toUpperCase();
+
+    const {
+      data: household,
+      error: householdError
+    } =
+      await supabaseClient
+        .from("households")
+        .insert({
+          name: spaceName,
+          invite_code: inviteCode
+        })
+        .select()
+        .single();
+
+    if (householdError) {
+
+      showMessage(
+        "householdMessage",
+        householdError.message
+      );
+
+      return;
+    }
+
+
+    const {
+      error: memberError
+    } =
+      await supabaseClient
+        .from("household_members")
+        .insert({
+          household_id: household.id,
+          user_id: currentUser.id,
+          display_name: displayName
+        });
+
+
+    if (memberError) {
+
+      showMessage(
+        "householdMessage",
+        memberError.message
+      );
+
+      return;
+    }
+
+    await loadUserState();
+  }
+
+
+  async function joinHousehold() {
+
+    const displayName =
+      document
+        .getElementById("displayNameJoin")
+        .value.trim();
+
+    const inviteCode =
+      document
+        .getElementById("inviteCode")
+        .value.trim()
+        .toUpperCase();
+
+    if (!displayName || !inviteCode) {
+
+      showMessage(
+        "householdMessage",
+        "Please enter your name and invite code."
+      );
+
+      return;
+    }
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .rpc(
+          "join_household_by_invite_code",
+          {
+            p_invite_code: inviteCode,
+            p_display_name: displayName
+          }
+        );
+
+    if (error) {
+
+      showMessage(
+        "householdMessage",
+        error.message
+      );
+
+      return;
+    }
+
+    await loadUserState();
+  }
+
+
+  /* =========================
+     INCOME
+  ========================= */
+
+  async function addIncome() {
+
+    const amount =
+      Number(
+        document
+          .getElementById("incomeAmount")
+          .value
+      );
+
+    const source =
+      document
+        .getElementById("incomeSource")
+        .value.trim();
+
+    if (!amount || amount <= 0) {
+      alert("Enter a valid amount.");
+      return;
+    }
+
+    if (!source) {
+      alert("Enter the income source.");
+      return;
+    }
+
+    const {
+      error
+    } =
+      await supabaseClient
+        .from("incomes")
+        .insert({
+          household_id:
+            currentHousehold.id,
+
+          user_id:
+            currentUser.id,
+
+          amount,
+          source,
+
+          income_date:
+            new Date().toISOString()
+        });
+
+    if (error) {
+
+      alert(error.message);
+
+      return;
+    }
+
+    document.getElementById(
+      "incomeAmount"
+    ).value = "";
+
+    document.getElementById(
+      "incomeSource"
+    ).value = "";
+
+    await refreshData();
+  }
+
+
+  /* =========================
+     EXPENSE
+  ========================= */
+
+  async function addExpense() {
+
+    const amount =
+      Number(
+        document
+          .getElementById("expenseAmount")
+          .value
+      );
+
+    const category =
+      document
+        .getElementById("expenseCategory")
+        .value;
+
+    const description =
+      document
+        .getElementById("expenseDescription")
+        .value.trim();
+
+    if (!amount || amount <= 0) {
+      alert("Enter a valid amount.");
+      return;
+    }
+
+    const {
+      error
+    } =
+      await supabaseClient
+        .from("expenses")
+        .insert({
+          household_id:
+            currentHousehold.id,
+
+          user_id:
+            currentUser.id,
+
+          amount,
+          category,
+
+          description:
+            description || null,
+
+          expense_date:
+            new Date().toISOString()
+        });
+
+    if (error) {
+
+      alert(error.message);
+
+      return;
+    }
+
+    document.getElementById(
+      "expenseAmount"
+    ).value = "";
+
+    document.getElementById(
+      "expenseDescription"
+    ).value = "";
+
+    await refreshData();
+  }
+
+
+  /* =========================
+     GOALS
+  ========================= */
+
+  function openGoalModal() {
+
+    document
+      .getElementById("goalModal")
+      .classList.remove("hidden");
+  }
+
+
+  function closeGoalModal() {
+
+    document
+      .getElementById("goalModal")
+      .classList.add("hidden");
+  }
+
+
+  async function addGoal() {
+
+    const name =
+      document
+        .getElementById("goalName")
+        .value.trim();
+
+    const target =
+      Number(
+        document
+          .getElementById("goalTarget")
+          .value
+      );
+
+    if (!name || !target || target <= 0) {
+
+      alert(
+        "Enter a goal name and valid target amount."
+      );
+
+      return;
+    }
+
+    const {
+      error
+    } =
+      await supabaseClient
+        .from("goals")
+        .insert({
+          household_id:
+            currentHousehold.id,
+
+          name,
+
+          target_amount:
+            target,
+
+          saved_amount:
+            0
+        });
+
+    if (error) {
+
+      alert(error.message);
+
+      return;
+    }
+
+    document.getElementById(
+      "goalName"
+    ).value = "";
+
+    document.getElementById(
+      "goalTarget"
+    ).value = "";
+
+    closeGoalModal();
+
+    await refreshData();
+  }
+
+
+  async function addSaving(
+    goalId,
+    currentSaved
+  ) {
+
+    const value =
+      prompt(
+        "How much would you like to save toward this goal?"
+      );
+
+    const amount =
+      Number(value);
+
+    if (!amount || amount <= 0) {
+      return;
+    }
+
+    const {
+      error: contributionError
+    } =
+      await supabaseClient
+        .from("goal_contributions")
+        .insert({
+          goal_id:
+            goalId,
+
+          household_id:
+            currentHousehold.id,
+
+          user_id:
+            currentUser.id,
+
+          amount
+        });
+
+    if (contributionError) {
+
+      alert(contributionError.message);
+
+      return;
+    }
+
+
+    const {
+      error: goalError
+    } =
+      await supabaseClient
+        .from("goals")
+        .update({
+          saved_amount:
+            Number(currentSaved) + amount
+        })
+        .eq("id", goalId);
+
+    if (goalError) {
+
+      alert(goalError.message);
+
+      return;
+    }
+
+    await refreshData();
+  }
+
+
+  /* =========================
+     LOAD DATA
+  ========================= */
+
+  async function refreshData() {
+
+    if (!currentHousehold) {
+      return;
+    }
+
+    const range =
+      selectedMonthRange();
+
+
+    const {
+      data: incomeData,
+      error: incomeError
+    } =
+      await supabaseClient
+        .from("incomes")
+        .select("*")
+        .eq(
+          "household_id",
+          currentHousehold.id
+        )
+        .gte(
+          "income_date",
+          range.start
+        )
+        .lt(
+          "income_date",
+          range.end
+        )
+        .order(
+          "income_date",
+          { ascending: false }
         );
 
 
-      return `
-        <div class="goal">
-
-          <div class="goal-name">
-            ${escapeHtml(goal.name)}
-          </div>
-
-          <div class="goal-amount">
-            ${money(saved)}
-            / ${money(target)}
-          </div>
-
-          <div class="progress">
-            <div
-              class="progress-bar"
-              style="width:${percentage}%"
-            ></div>
-          </div>
-
-          <div class="item-note">
-            ${Math.round(percentage)}% completed
-          </div>
-
-          <button
-            onclick="addSaving(
-              '${goal.id}',
-              ${saved}
-            )"
-          >
-            + Add Saving
-          </button>
-
-        </div>
-      `;
-
-    }).join("");
-
-}
+    const {
+      data: expenseData,
+      error: expenseError
+    } =
+      await supabaseClient
+        .from("expenses")
+        .select("*")
+        .eq(
+          "household_id",
+          currentHousehold.id
+        )
+        .gte(
+          "expense_date",
+          range.start
+        )
+        .lt(
+          "expense_date",
+          range.end
+        )
+        .order(
+          "expense_date",
+          { ascending: false }
+        );
 
 
-/* TRANSACTIONS */
+    const {
+      data: goalData,
+      error: goalError
+    } =
+      await supabaseClient
+        .from("goals")
+        .select("*")
+        .eq(
+          "household_id",
+          currentHousehold.id
+        )
+        .order(
+          "created_at",
+          { ascending: false }
+        );
 
-function renderTransactions(
-  incomes,
-  expenses
-) {
 
-  const container =
+    if (incomeError) {
+      console.error(incomeError);
+    }
+
+    if (expenseError) {
+      console.error(expenseError);
+    }
+
+    if (goalError) {
+      console.error(goalError);
+    }
+
+
+    incomes =
+      incomeData || [];
+
+    expenses =
+      expenseData || [];
+
+    goals =
+      goalData || [];
+
+
+    renderDashboard();
+    renderGoals();
+    renderTransactions();
+    renderCategoryAnalysis();
+  }
+
+
+  /* =========================
+     DASHBOARD
+  ========================= */
+
+  function renderDashboard() {
+
+    const totalIncome =
+      incomes.reduce(
+        (sum, item) =>
+          sum + Number(item.amount || 0),
+        0
+      );
+
+
+    const totalExpenses =
+      expenses.reduce(
+        (sum, item) =>
+          sum + Number(item.amount || 0),
+        0
+      );
+
+
+    const remaining =
+      totalIncome - totalExpenses;
+
+
+    const rate =
+      totalIncome > 0
+        ? Math.round(
+            ((totalIncome - totalExpenses)
+              / totalIncome) * 100
+          )
+        : 0;
+
+
     document.getElementById(
-      "transactionsList"
+      "monthlyIncome"
+    ).textContent =
+      money(totalIncome);
+
+
+    document.getElementById(
+      "monthlyExpenses"
+    ).textContent =
+      money(totalExpenses);
+
+
+    const remainingEl =
+      document.getElementById(
+        "monthlyRemaining"
+      );
+
+    remainingEl.textContent =
+      money(remaining);
+
+    remainingEl.className =
+      "stat-value " +
+      (
+        remaining >= 0
+          ? "positive"
+          : "negative"
+      );
+
+
+    const savingRateEl =
+      document.getElementById(
+        "savingRate"
+      );
+
+    savingRateEl.textContent =
+      Math.max(rate, 0) + "%";
+
+    savingRateEl.className =
+      "stat-value " +
+      (
+        rate >= 0
+          ? "positive"
+          : "negative"
+      );
+  }
+
+
+  /* =========================
+     CATEGORY ANALYSIS
+  ========================= */
+
+  function renderCategoryAnalysis() {
+
+    const container =
+      document.getElementById(
+        "categoryAnalysis"
+      );
+
+    if (!expenses.length) {
+
+      container.innerHTML =
+        `<div class="empty">
+          No expenses for this month yet.
+        </div>`;
+
+      return;
+    }
+
+
+    const categories = {};
+
+
+    expenses.forEach(expense => {
+
+      const category =
+        expense.category || "Other";
+
+      categories[category] =
+        (categories[category] || 0)
+        + Number(expense.amount || 0);
+    });
+
+
+    const entries =
+      Object.entries(categories)
+        .sort(
+          (a, b) => b[1] - a[1]
+        );
+
+
+    const max =
+      entries[0]?.[1] || 1;
+
+
+    container.innerHTML =
+      entries
+        .map(([category, amount]) => {
+
+          const width =
+            Math.max(
+              5,
+              Math.round(
+                (amount / max) * 100
+              )
+            );
+
+          return `
+            <div class="category-row">
+
+              <div class="category-head">
+
+                <span class="category-name">
+                  ${escapeHtml(category)}
+                </span>
+
+                <span class="category-value">
+                  ${money(amount)}
+                </span>
+
+              </div>
+
+              <div class="bar">
+
+                <div
+                  class="bar-fill"
+                  style="width:${width}%"
+                ></div>
+
+              </div>
+
+            </div>
+          `;
+
+        })
+        .join("");
+  }
+
+
+  /* =========================
+     GOALS UI
+  ========================= */
+
+  function renderGoals() {
+
+    const container =
+      document.getElementById(
+        "goalsList"
+      );
+
+
+    if (!goals.length) {
+
+      container.innerHTML =
+        `<div class="empty">
+          No saving goals yet.
+        </div>`;
+
+      return;
+    }
+
+
+    container.innerHTML =
+      goals.map(goal => {
+
+        const target =
+          Number(
+            goal.target_amount || 0
+          );
+
+        const saved =
+          Number(
+            goal.saved_amount || 0
+          );
+
+        const progress =
+          target > 0
+            ? Math.min(
+                100,
+                Math.round(
+                  (saved / target) * 100
+                )
+              )
+            : 0;
+
+        const remaining =
+          Math.max(
+            0,
+            target - saved
+          );
+
+
+        return `
+          <div class="goal">
+
+            <div class="goal-head">
+
+              <div>
+                <div class="goal-name">
+                  ${escapeHtml(goal.name)}
+                </div>
+
+                <div class="goal-amount">
+                  ${money(saved)}
+                  / ${money(target)}
+                </div>
+              </div>
+
+              <button
+                class="secondary"
+                style="padding:8px 10px;font-size:12px;"
+                onclick="addSaving(
+                  '${goal.id}',
+                  ${saved}
+                )"
+              >
+                + Save
+              </button>
+
+            </div>
+
+            <div class="goal-bar">
+              <div
+                class="goal-fill"
+                style="width:${progress}%"
+              ></div>
+            </div>
+
+            <div class="goal-footer">
+
+              <span>
+                ${progress}% complete
+              </span>
+
+              <span>
+                ${money(remaining)} remaining
+              </span>
+
+            </div>
+
+          </div>
+        `;
+
+      }).join("");
+  }
+
+
+  /* =========================
+     TRANSACTIONS
+  ========================= */
+
+  function renderTransactions() {
+
+    const container =
+      document.getElementById(
+        "transactionsList"
+      );
+
+
+    const combined = [
+
+      ...incomes.map(item => ({
+        type: "income",
+        date: item.income_date,
+        title:
+          item.source || "Income",
+        amount:
+          Number(item.amount || 0)
+      })),
+
+      ...expenses.map(item => ({
+        type: "expense",
+        date: item.expense_date,
+        title:
+          item.description ||
+          item.category ||
+          "Expense",
+        category:
+          item.category,
+        amount:
+          Number(item.amount || 0)
+      }))
+
+    ]
+    .sort(
+      (a, b) =>
+        new Date(b.date) -
+        new Date(a.date)
     );
 
 
-  const transactions = [
+    if (!combined.length) {
 
-    ...incomes.map(item => ({
-      type: "income",
-      amount: Number(item.amount),
-      title:
-        item.source || "Income",
-      note: item.note || "",
-      date: item.income_date
-    })),
+      container.innerHTML =
+        `<div class="empty">
+          No transactions for this month.
+        </div>`;
 
-    ...expenses.map(item => ({
-      type: "expense",
-      amount: Number(item.amount),
-      title:
-        item.category || "Expense",
-      note: item.note || "",
-      date: item.expense_date
-    }))
-
-  ];
+      return;
+    }
 
 
-  transactions.sort(
-    (a, b) =>
-      new Date(b.date) -
-      new Date(a.date)
+    container.innerHTML =
+      combined
+        .slice(0, 20)
+        .map(item => {
+
+          const date =
+            new Date(item.date)
+              .toLocaleDateString(
+                "en-GB",
+                {
+                  day: "2-digit",
+                  month: "short"
+                }
+              );
+
+
+          return `
+            <div class="transaction">
+
+              <div>
+
+                <div class="transaction-title">
+                  ${escapeHtml(item.title)}
+                </div>
+
+                <div class="transaction-date">
+                  ${escapeHtml(item.category || "")}
+                  ${item.category ? " • " : ""}
+                  ${date}
+                </div>
+
+              </div>
+
+              <div class="${item.type}">
+                ${item.type === "income" ? "+" : "-"}
+                ${money(item.amount)}
+              </div>
+
+            </div>
+          `;
+
+        })
+        .join("");
+  }
+
+
+  /* =========================
+     INVITE
+  ========================= */
+
+  async function copyInviteCode() {
+
+    const code =
+      currentHousehold?.invite_code;
+
+    if (!code) {
+      return;
+    }
+
+    try {
+
+      await navigator.clipboard.writeText(code);
+
+      alert(
+        "Invite code copied: " + code
+      );
+
+    } catch {
+
+      alert(
+        "Invite code: " + code
+      );
+    }
+  }
+
+
+  /* =========================
+     AUTH LISTENER
+  ========================= */
+
+  supabaseClient.auth.onAuthStateChange(
+    async (event, session) => {
+
+      if (session?.user) {
+
+        currentUser =
+          session.user;
+
+        await loadUserState();
+
+      } else {
+
+        showScreen("authScreen");
+
+      }
+
+    }
   );
 
 
-  const recent =
-    transactions.slice(0, 10);
+  /* =========================
+     START
+  ========================= */
 
+  (async function init() {
 
-  if (!recent.length) {
+    const {
+      data: {
+        session
+      }
+    } =
+      await supabaseClient.auth.getSession();
 
-    container.innerHTML =
-      '<div class="empty">No transactions yet.</div>';
-
-    return;
-  }
-
-
-  container.innerHTML =
-    recent.map(item => {
-
-      const isIncome =
-        item.type === "income";
-
-
-      return `
-        <div class="item">
-
-          <div class="item-top">
-
-            <strong>
-              ${escapeHtml(item.title)}
-            </strong>
-
-            <strong
-              class="${
-                isIncome
-                  ? "income-text"
-                  : "expense-text"
-              }"
-            >
-              ${
-                isIncome ? "+" : "-"
-              }${money(item.amount)}
-            </strong>
-
-          </div>
-
-          ${
-            item.note
-              ? `<div class="item-note">
-                  ${escapeHtml(item.note)}
-                 </div>`
-              : ""
-          }
-
-          <div class="item-note">
-            ${item.date}
-          </div>
-
-        </div>
-      `;
-
-    }).join("");
-
-}
-
-
-/* SAFE HTML */
-
-function escapeHtml(value) {
-
-  return String(value || "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-
-}
-
-
-/* COPY CODE */
-
-async function copyInviteCode() {
-
-  const code =
-    document.getElementById(
-      "myInviteCode"
-    ).textContent;
-
-  try {
-
-    await navigator.clipboard
-      .writeText(code);
-
-    showMessage(
-      "Invite code copied!"
-    );
-
-  } catch {
-
-    showMessage(
-      "Invite code: " + code
-    );
-
-  }
-
-}
-
-
-/* LOGOUT */
-
-async function logout() {
-
-  await supabaseClient.auth.signOut();
-
-  currentUser = null;
-  currentHousehold = null;
-  currentMember = null;
-
-  showScreen("authScreen");
-
-  showMessage("Logged out.");
-
-}
-
-
-/* AUTH STATE */
-
-supabaseClient.auth.onAuthStateChange(
-  async (event, session) => {
-
-    if (session && session.user) {
+    if (session?.user) {
 
       currentUser =
         session.user;
 
-      setTimeout(
-        () => loadUserState(),
-        0
-      );
+      await loadUserState();
 
     } else {
 
@@ -1674,8 +2236,7 @@ supabaseClient.auth.onAuthStateChange(
 
     }
 
-  }
-);
+  })();
 
 </script>
 
