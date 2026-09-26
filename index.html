@@ -2,2794 +2,1981 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#111111">
-  <title>U&me</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f5f5f5;
-      color: #111;
-      min-height: 100vh;
-    }
-
-    button,
-    input,
-    select {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .container {
-      width: min(1100px, calc(100% - 28px));
-      margin: auto;
-    }
-
-    /* AUTH */
-
-    .auth-wrapper {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .auth-card {
-      width: min(420px, 100%);
-      background: white;
-      border-radius: 24px;
-      padding: 32px;
-      box-shadow: 0 15px 45px rgba(0,0,0,.08);
-    }
-
-    .logo {
-      font-size: 38px;
-      font-weight: 800;
-      letter-spacing: -2px;
-      margin-bottom: 5px;
-    }
-
-    .subtitle {
-      color: #777;
-      margin-bottom: 28px;
-    }
-
-    input,
-    select {
-      width: 100%;
-      padding: 14px 15px;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      background: white;
-      outline: none;
-      margin-bottom: 12px;
-    }
-
-    input:focus,
-    select:focus {
-      border-color: #111;
-    }
-
-    button {
-      border: 0;
-      border-radius: 12px;
-      padding: 13px 16px;
-      background: #111;
-      color: white;
-      font-weight: 700;
-    }
-
-    button.secondary {
-      background: #eee;
-      color: #111;
-    }
-
-    button.danger {
-      background: #e5484d;
-    }
-
-    .auth-buttons {
-      display: grid;
-      gap: 10px;
-      margin-top: 5px;
-    }
-
-    .message {
-      margin-top: 14px;
-      padding: 12px;
-      border-radius: 10px;
-      background: #f1f1f1;
-      color: #555;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    /* HOUSEHOLD */
-
-    .household-wrapper {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .household-card {
-      width: min(500px, 100%);
-      background: white;
-      border-radius: 24px;
-      padding: 32px;
-      box-shadow: 0 15px 45px rgba(0,0,0,.08);
-    }
-
-    .divider {
-      height: 1px;
-      background: #eee;
-      margin: 25px 0;
-    }
-
-    .invite-box {
-      background: #f5f5f5;
-      border-radius: 15px;
-      padding: 18px;
-      margin-top: 10px;
-    }
-
-    .invite-code {
-      font-size: 27px;
-      font-weight: 800;
-      letter-spacing: 5px;
-      margin: 8px 0 14px;
-    }
-
-    /* APP */
-
-    .app {
-      min-height: 100vh;
-    }
-
-    .topbar {
-      background: white;
-      border-bottom: 1px solid #e8e8e8;
-      position: sticky;
-      top: 0;
-      z-index: 20;
-    }
-
-    .topbar-inner {
-      min-height: 72px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-    }
-
-    .brand {
-      font-size: 27px;
-      font-weight: 800;
-      letter-spacing: -1.5px;
-    }
-
-    .space-name {
-      color: #777;
-      font-size: 13px;
-      margin-top: 3px;
-    }
-
-    .top-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .top-actions button {
-      padding: 9px 12px;
-      font-size: 13px;
-    }
-
-    main {
-      padding: 25px 0 50px;
-    }
-
-    .welcome {
-      margin-bottom: 20px;
-    }
-
-    .welcome h1 {
-      font-size: 28px;
-      margin-bottom: 5px;
-    }
-
-    .welcome p {
-      color: #777;
-    }
-
-    /* MONTH */
-
-    .month-bar {
-      background: white;
-      border-radius: 18px;
-      padding: 15px;
-      margin-bottom: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      box-shadow: 0 5px 20px rgba(0,0,0,.04);
-    }
-
-    .month-bar label {
-      font-size: 13px;
-      color: #777;
-      display: block;
-      margin-bottom: 5px;
-    }
-
-    .month-bar input {
-      margin: 0;
-      max-width: 180px;
-    }
-
-    .month-note {
-      color: #777;
-      font-size: 13px;
-    }
-
-    /* STATS */
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
-      margin-bottom: 18px;
-    }
-
-    .stat {
-      background: white;
-      border-radius: 18px;
-      padding: 20px;
-      box-shadow: 0 5px 20px rgba(0,0,0,.04);
-    }
-
-    .stat-label {
-      color: #777;
-      font-size: 13px;
-      margin-bottom: 10px;
-    }
-
-    .stat-value {
-      font-size: 25px;
-      font-weight: 800;
-    }
-
-    .stat-small {
-      color: #999;
-      font-size: 12px;
-      margin-top: 7px;
-    }
-
-    .positive {
-      color: #198754;
-    }
-
-    .negative {
-      color: #d93025;
-    }
-
-    /* GRID */
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      margin-bottom: 18px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 20px;
-      padding: 22px;
-      box-shadow: 0 5px 20px rgba(0,0,0,.04);
-    }
-
-    .card h2 {
-      font-size: 18px;
-      margin-bottom: 5px;
-    }
-
-    .card-subtitle {
-      color: #888;
-      font-size: 13px;
-      margin-bottom: 18px;
-    }
-
-    /* FORMS */
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .form-grid .full {
-      grid-column: 1 / -1;
-    }
-
-    .form-grid button {
-      width: 100%;
-    }
-
-    /* CATEGORY */
-
-    .category-row {
-      margin-bottom: 17px;
-    }
-
-    .category-head {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 7px;
-      font-size: 13px;
-    }
-
-    .category-name {
-      font-weight: 700;
-    }
-
-    .category-value {
-      color: #777;
-    }
-
-    .bar {
-      height: 9px;
-      background: #eee;
-      border-radius: 20px;
-      overflow: hidden;
-    }
-
-    .bar-fill {
-      height: 100%;
-      background: #111;
-      border-radius: 20px;
-    }
-
-    .empty {
-      color: #999;
-      font-size: 14px;
-      padding: 15px 0;
-    }
-
-    /* GOALS */
-
-    .goal {
-      padding: 15px 0;
-      border-bottom: 1px solid #eee;
-    }
-
-    .goal:first-child {
-      padding-top: 0;
-    }
-
-    .goal:last-child {
-      border-bottom: 0;
-    }
-
-    .goal-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 15px;
-      margin-bottom: 9px;
-    }
-
-    .goal-name {
-      font-weight: 800;
-    }
-
-    .goal-amount {
-      font-size: 13px;
-      color: #777;
-    }
-
-    .goal-bar {
-      height: 10px;
-      background: #eee;
-      border-radius: 20px;
-      overflow: hidden;
-    }
-
-    .goal-fill {
-      height: 100%;
-      background: #111;
-      border-radius: 20px;
-    }
-
-    .goal-footer {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 8px;
-      font-size: 12px;
-      color: #888;
-    }
-
-    /* TRANSACTIONS */
-
-    .transaction {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      padding: 13px 0;
-      border-bottom: 1px solid #eee;
-    }
-
-    .transaction:last-child {
-      border-bottom: 0;
-    }
-
-    .transaction-title {
-      font-weight: 700;
-      font-size: 14px;
-    }
-
-    .transaction-date {
-      color: #999;
-      font-size: 12px;
-      margin-top: 4px;
-    }
-
-    .income {
-      color: #198754;
-      font-weight: 800;
-    }
-
-    .expense {
-      color: #d93025;
-      font-weight: 800;
-    }
-
-    /* INVITE */
-
-    .invite-small {
-      background: #f6f6f6;
-      border-radius: 14px;
-      padding: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .invite-small-code {
-      font-weight: 800;
-      letter-spacing: 3px;
-    }
-
-    /* MODAL */
-
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.45);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      z-index: 50;
-    }
-
-    .modal-card {
-      width: min(430px, 100%);
-      background: white;
-      border-radius: 22px;
-      padding: 25px;
-    }
-
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 5px;
-    }
-
-    .modal-actions button {
-      flex: 1;
-    }
-
-    /* RESET DATA */
-
-    .reset-modal-card {
-      width: min(460px, 100%);
-      background: white;
-      border-radius: 22px;
-      padding: 25px;
-    }
-
-    .reset-warning {
-      background: #fff5f5;
-      border: 1px solid #ffd7d7;
-      color: #a61b1b;
-      border-radius: 14px;
-      padding: 13px;
-      margin-bottom: 18px;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .reset-options {
-      display: grid;
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    .reset-option {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px;
-      border: 1px solid #e5e5e5;
-      border-radius: 14px;
-      cursor: pointer;
-      transition: .15s;
-    }
-
-    .reset-option:hover {
-      background: #f8f8f8;
-    }
-
-    .reset-option input {
-      width: 18px;
-      height: 18px;
-      margin: 0;
-      flex-shrink: 0;
-      accent-color: #111;
-    }
-
-    .reset-option-text {
-      flex: 1;
-    }
-
-    .reset-option-title {
-      font-weight: 700;
-      font-size: 14px;
-    }
-
-    .reset-option-description {
-      color: #888;
-      font-size: 12px;
-      margin-top: 3px;
-    }
-
-    .reset-select-actions {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 15px;
-    }
-
-    .reset-select-actions button {
-      flex: 1;
-      padding: 9px 10px;
-      font-size: 12px;
-    }
-
-    .reset-confirm-box {
-      background: #f5f5f5;
-      border-radius: 12px;
-      padding: 12px;
-      color: #555;
-      font-size: 13px;
-      line-height: 1.5;
-      margin-bottom: 15px;
-    }
-
-    .danger-confirm {
-      background: #e5484d;
-      color: white;
-    }
-
-    .danger-confirm:hover {
-      background: #c9363b;
-    }
-
-    /* MOBILE */
-
-    @media (max-width: 850px) {
-      .stats {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .container {
-        width: min(100% - 20px, 1100px);
-      }
-
-      .topbar-inner {
-        min-height: 65px;
-      }
-
-      .brand {
-        font-size: 24px;
-      }
-
-      .top-actions button {
-        padding: 8px 9px;
-      }
-
-      main {
-        padding-top: 18px;
-      }
-
-      .stats {
-        gap: 10px;
-      }
-
-      .stat {
-        padding: 15px;
-      }
-
-      .stat-value {
-        font-size: 20px;
-      }
-
-      .month-bar {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .month-bar input {
-        max-width: 100%;
-      }
-
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .form-grid .full {
-        grid-column: auto;
-      }
-
-      .top-actions {
-        gap: 5px;
-      }
-
-      .top-actions button {
-        font-size: 11px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111111">
+<title>U&me</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;background:#f5f5f5;color:#111;min-height:100vh}
+button,input,select{font:inherit}
+button{cursor:pointer;border:0;border-radius:12px;padding:13px 16px;background:#111;color:white;font-weight:700}
+button.secondary{background:#eee;color:#111}
+button.danger{background:#e5484d}
+.hidden{display:none!important}
+.container{width:min(1100px,calc(100% - 28px));margin:auto}
+
+.auth-wrapper,.household-wrapper{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.auth-card,.household-card{width:min(420px,100%);background:white;border-radius:24px;padding:32px;box-shadow:0 15px 45px rgba(0,0,0,.08)}
+.household-card{width:min(500px,100%)}
+.logo{font-size:38px;font-weight:800;letter-spacing:-2px;margin-bottom:5px}
+.subtitle{color:#777;margin-bottom:28px}
+input,select{width:100%;padding:14px 15px;border:1px solid #ddd;border-radius:12px;background:white;outline:none;margin-bottom:12px}
+input:focus,select:focus{border-color:#111}
+.auth-buttons{display:grid;gap:10px;margin-top:5px}
+.message{margin-top:14px;padding:12px;border-radius:10px;background:#f1f1f1;color:#555;font-size:14px;line-height:1.5}
+.divider{height:1px;background:#eee;margin:25px 0}
+.invite-box{background:#f5f5f5;border-radius:15px;padding:18px;margin-top:10px}
+.invite-code{font-size:27px;font-weight:800;letter-spacing:5px;margin:8px 0 14px}
+
+.app{min-height:100vh}
+.topbar{background:white;border-bottom:1px solid #e8e8e8;position:sticky;top:0;z-index:20}
+.topbar-inner{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.brand{font-size:27px;font-weight:800;letter-spacing:-1.5px}
+.space-name{color:#777;font-size:13px;margin-top:3px}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.top-actions button{padding:9px 12px;font-size:13px}
+main{padding:25px 0 50px}
+.welcome{margin-bottom:20px}
+.welcome h1{font-size:28px;margin-bottom:5px}
+.welcome p{color:#777}
+
+.month-bar{background:white;border-radius:18px;padding:15px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:15px;box-shadow:0 5px 20px rgba(0,0,0,.04)}
+.month-bar label{font-size:13px;color:#777;display:block;margin-bottom:5px}
+.month-bar input{margin:0;max-width:180px}
+.month-note{color:#777;font-size:13px}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:18px}
+.stat{background:white;border-radius:18px;padding:20px;box-shadow:0 5px 20px rgba(0,0,0,.04)}
+.stat-label{color:#777;font-size:13px;margin-bottom:10px}
+.stat-value{font-size:25px;font-weight:800}
+.stat-small{color:#999;font-size:12px;margin-top:7px}
+.positive{color:#198754}
+.negative{color:#d93025}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.card{background:white;border-radius:20px;padding:22px;box-shadow:0 5px 20px rgba(0,0,0,.04)}
+.card h2{font-size:18px;margin-bottom:5px}
+.card-subtitle{color:#888;font-size:13px;margin-bottom:18px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-grid .full{grid-column:1/-1}
+.form-grid button{width:100%}
+
+.category-row{margin-bottom:17px}
+.category-head{display:flex;justify-content:space-between;margin-bottom:7px;font-size:13px}
+.category-name{font-weight:700}
+.category-value{color:#777}
+.bar{height:9px;background:#eee;border-radius:20px;overflow:hidden}
+.bar-fill{height:100%;background:#111;border-radius:20px}
+.empty{color:#999;font-size:14px;padding:15px 0}
+
+.goal{padding:15px 0;border-bottom:1px solid #eee}
+.goal:first-child{padding-top:0}
+.goal:last-child{border-bottom:0}
+.goal-head{display:flex;justify-content:space-between;gap:15px;margin-bottom:9px}
+.goal-name{font-weight:800}
+.goal-amount{font-size:13px;color:#777}
+.goal-bar{height:10px;background:#eee;border-radius:20px;overflow:hidden}
+.goal-fill{height:100%;background:#111;border-radius:20px}
+.goal-footer{display:flex;justify-content:space-between;margin-top:8px;font-size:12px;color:#888}
+
+.transaction{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:13px 0;border-bottom:1px solid #eee}
+.transaction:last-child{border-bottom:0}
+.transaction-title{font-weight:700;font-size:14px}
+.transaction-date{color:#999;font-size:12px;margin-top:4px}
+.income{color:#198754;font-weight:800}
+.expense{color:#d93025;font-weight:800}
+.saving{color:#198754;font-weight:800}
+
+.invite-small{background:#f6f6f6;border-radius:14px;padding:15px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.invite-small-code{font-weight:800;letter-spacing:3px}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
+.modal-card,.reset-modal-card{width:min(460px,100%);background:white;border-radius:22px;padding:25px}
+.modal-actions{display:flex;gap:10px;margin-top:5px}
+.modal-actions button{flex:1}
+
+.reset-warning{background:#fff5f5;border:1px solid #ffd7d7;color:#a61b1b;border-radius:14px;padding:13px;margin-bottom:18px;font-size:13px;line-height:1.5}
+.reset-options{display:grid;gap:10px;margin-bottom:18px}
+.reset-option{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid #e5e5e5;border-radius:14px;cursor:pointer}
+.reset-option:hover{background:#f8f8f8}
+.reset-option input{width:18px;height:18px;margin:0;flex-shrink:0;accent-color:#111}
+.reset-option-text{flex:1}
+.reset-option-title{font-weight:700;font-size:14px}
+.reset-option-description{color:#888;font-size:12px;margin-top:3px}
+.reset-select-actions{display:flex;gap:8px;margin-bottom:15px}
+.reset-select-actions button{flex:1;padding:9px 10px;font-size:12px}
+.reset-confirm-box{background:#f5f5f5;border-radius:12px;padding:12px;color:#555;font-size:13px;line-height:1.5;margin-bottom:15px}
+.danger-confirm{background:#e5484d;color:white}
+.danger-confirm:hover{background:#c9363b}
+
+@media(max-width:850px){
+.stats{grid-template-columns:1fr 1fr}
+.grid{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+.container{width:min(100% - 20px,1100px)}
+.topbar-inner{min-height:65px}
+.brand{font-size:24px}
+.top-actions button{padding:8px 9px}
+main{padding-top:18px}
+.stats{gap:10px}
+.stat{padding:15px}
+.stat-value{font-size:20px}
+.month-bar{align-items:flex-start;flex-direction:column}
+.month-bar input{max-width:100%}
+.form-grid{grid-template-columns:1fr}
+.form-grid .full{grid-column:auto}
+.top-actions{gap:5px}
+.top-actions button{font-size:11px}
+}
+</style>
 </head>
 
 <body>
 
-  <!-- AUTH SCREEN -->
-  <section id="authScreen" class="auth-wrapper">
-    <div class="auth-card">
-      <div class="logo">U&me</div>
-      <div class="subtitle">Your shared financial space.</div>
+<section id="authScreen" class="auth-wrapper">
+<div class="auth-card">
+<div class="logo">U&me</div>
+<div class="subtitle">Your shared financial space.</div>
 
-      <input id="email" type="email" placeholder="Email">
-      <input id="password" type="password" placeholder="Password">
+<input id="email" type="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
 
-      <div class="auth-buttons">
-        <button onclick="signIn()">Log in</button>
-        <button class="secondary" onclick="signUp()">Create account</button>
-      </div>
+<div class="auth-buttons">
+<button onclick="signIn()">Log in</button>
+<button class="secondary" onclick="signUp()">Create account</button>
+</div>
 
-      <div id="authMessage" class="message hidden"></div>
-    </div>
-  </section>
+<div id="authMessage" class="message hidden"></div>
+</div>
+</section>
 
 
-  <!-- HOUSEHOLD SCREEN -->
-  <section id="householdScreen" class="household-wrapper hidden">
-    <div class="household-card">
-      <div class="logo">U&me</div>
-      <div class="subtitle">Create your shared space or join your partner.</div>
+<section id="householdScreen" class="household-wrapper hidden">
+<div class="household-card">
+<div class="logo">U&me</div>
+<div class="subtitle">Create your shared space or join your partner.</div>
 
-      <h3>Create a new space</h3>
+<h3>Create a new space</h3>
 
-      <input id="displayNameCreate" placeholder="Your name">
-      <input id="spaceName" placeholder="Space name, e.g. Mohammed & Yasmin">
+<input id="displayNameCreate" placeholder="Your name">
+<input id="spaceName" placeholder="Space name, e.g. Mohammed & Yasmin">
 
-      <button onclick="createHousehold()" style="width:100%;">
-        Create shared space
-      </button>
+<button onclick="createHousehold()" style="width:100%;">
+Create shared space
+</button>
 
-      <div class="divider"></div>
+<div class="divider"></div>
 
-      <h3>Join an existing space</h3>
+<h3>Join an existing space</h3>
 
-      <input id="displayNameJoin" placeholder="Your name">
-      <input id="inviteCode" placeholder="Invite code">
+<input id="displayNameJoin" placeholder="Your name">
+<input id="inviteCode" placeholder="Invite code">
 
-      <button onclick="joinHousehold()" style="width:100%;">
-        Join shared space
-      </button>
+<button onclick="joinHousehold()" style="width:100%;">
+Join shared space
+</button>
 
-      <div id="householdMessage" class="message hidden"></div>
+<div id="householdMessage" class="message hidden"></div>
 
-      <button class="secondary" onclick="logout()" style="width:100%; margin-top:15px;">
-        Log out
-      </button>
-    </div>
-  </section>
+<button class="secondary" onclick="logout()" style="width:100%;margin-top:15px;">
+Log out
+</button>
+</div>
+</section>
 
 
-  <!-- APP -->
-  <section id="homeScreen" class="app hidden">
+<section id="homeScreen" class="app hidden">
 
-    <header class="topbar">
-      <div class="container topbar-inner">
+<header class="topbar">
+<div class="container topbar-inner">
 
-        <div>
-          <div class="brand">U&me</div>
-          <div id="spaceNameDisplay" class="space-name">
-            Our shared space
-          </div>
-        </div>
+<div>
+<div class="brand">U&me</div>
+<div id="spaceNameDisplay" class="space-name">Our shared space</div>
+</div>
 
-        <div class="top-actions">
+<div class="top-actions">
 
-          <button class="secondary" onclick="openGoalModal()">
-            + Goal
-          </button>
+<button class="secondary" onclick="openGoalModal()">+ Goal</button>
 
-          <button class="secondary" onclick="openResetModal()">
-            🗑️ Data
-          </button>
+<button class="secondary" onclick="openResetModal()">🗑️ Data</button>
 
-          <button class="secondary" onclick="logout()">
-            Log out
-          </button>
+<button class="secondary" onclick="logout()">Log out</button>
 
-        </div>
+</div>
+</div>
+</header>
 
-      </div>
-    </header>
 
+<main>
+<div class="container">
 
-    <main>
-      <div class="container">
+<div class="welcome">
+<h1>Financial Dashboard</h1>
+<p>See where your money is going and how close you are to your goals.</p>
+</div>
 
-        <div class="welcome">
-          <h1>Financial Dashboard</h1>
-          <p>See where your money is going and how close you are to your goals.</p>
-        </div>
 
+<div class="month-bar">
+<div>
+<label>Selected month</label>
+<input id="monthPicker" type="month" onchange="refreshData()">
+</div>
 
-        <!-- MONTH -->
-        <div class="month-bar">
+<div class="month-note">
+Dashboard calculations are based on the selected month.
+</div>
+</div>
 
-          <div>
-            <label>Selected month</label>
-            <input id="monthPicker" type="month" onchange="refreshData()">
-          </div>
-
-          <div class="month-note">
-            Dashboard calculations are based on the selected month.
-          </div>
-
-        </div>
-
-
-        <!-- STATS -->
-        <div class="stats">
-
-          <div class="stat">
-            <div class="stat-label">Monthly income</div>
-            <div id="monthlyIncome" class="stat-value">0 EGP</div>
-            <div class="stat-small">Total income this month</div>
-          </div>
-
-          <div class="stat">
-            <div class="stat-label">Monthly expenses</div>
-            <div id="monthlyExpenses" class="stat-value">0 EGP</div>
-            <div class="stat-small">Total spending this month</div>
-          </div>
 
-          <div class="stat">
-            <div class="stat-label">Remaining</div>
-            <div id="monthlyRemaining" class="stat-value">0 EGP</div>
-            <div class="stat-small">Income minus expenses</div>
-          </div>
+<div class="stats">
 
-          <div class="stat">
-            <div class="stat-label">Saving rate</div>
-            <div id="savingRate" class="stat-value">0%</div>
-            <div class="stat-small">Based on this month's income</div>
-          </div>
+<div class="stat">
+<div class="stat-label">Monthly income</div>
+<div id="monthlyIncome" class="stat-value">0 EGP</div>
+<div class="stat-small">Total income this month</div>
+</div>
 
-        </div>
+<div class="stat">
+<div class="stat-label">Monthly expenses</div>
+<div id="monthlyExpenses" class="stat-value">0 EGP</div>
+<div class="stat-small">Total spending this month</div>
+</div>
 
+<div class="stat">
+<div class="stat-label">Remaining</div>
+<div id="monthlyRemaining" class="stat-value">0 EGP</div>
+<div class="stat-small">Income minus expenses</div>
+</div>
 
-        <!-- ADD MONEY -->
-        <div class="grid">
+<div class="stat">
+<div class="stat-label">Saving rate</div>
+<div id="savingRate" class="stat-value">0%</div>
+<div class="stat-small">Based on this month's income</div>
+</div>
 
-          <div class="card">
+</div>
 
-            <h2>Add income</h2>
-            <div class="card-subtitle">
-              Add salary, freelance work, bonus or any other income.
-            </div>
 
-            <div class="form-grid">
+<div class="grid">
 
-              <input
-                id="incomeAmount"
-                type="number"
-                min="0"
-                placeholder="Amount"
-              >
+<div class="card">
 
-              <input
-                id="incomeSource"
-                placeholder="Source, e.g. Salary"
-              >
+<h2>Add income</h2>
+<div class="card-subtitle">
+Add salary, freelance work, bonus or any other income.
+</div>
 
-              <button
-                class="full"
-                onclick="addIncome()"
-              >
-                + Add income
-              </button>
+<div class="form-grid">
 
-            </div>
+<input id="incomeAmount" type="number" min="0" placeholder="Amount">
 
-          </div>
+<input id="incomeSource" placeholder="Source, e.g. Salary">
 
+<button class="full" onclick="addIncome()">+ Add income</button>
 
-          <div class="card">
+</div>
+</div>
 
-            <h2>Add expense</h2>
-            <div class="card-subtitle">
-              Track where your money goes.
-            </div>
 
-            <div class="form-grid">
+<div class="card">
 
-              <input
-                id="expenseAmount"
-                type="number"
-                min="0"
-                placeholder="Amount"
-              >
+<h2>Add expense</h2>
+<div class="card-subtitle">
+Track where your money goes.
+</div>
 
-              <select id="expenseCategory">
-                <option value="Food">Food</option>
-                <option value="Transport">Transport</option>
-                <option value="Home">Home</option>
-                <option value="Shopping">Shopping</option>
-                <option value="Bills">Bills</option>
-                <option value="Entertainment">Entertainment</option>
-                <option value="Health">Health</option>
-                <option value="Family">Family</option>
-                <option value="Other">Other</option>
-              </select>
+<div class="form-grid">
 
-              <input
-                id="expenseDescription"
-                class="full"
-                placeholder="Description"
-              >
+<input id="expenseAmount" type="number" min="0" placeholder="Amount">
 
-              <button
-                class="full"
-                onclick="addExpense()"
-              >
-                + Add expense
-              </button>
+<select id="expenseCategory">
+<option value="Food">Food</option>
+<option value="Transport">Transport</option>
+<option value="Home">Home</option>
+<option value="Shopping">Shopping</option>
+<option value="Bills">Bills</option>
+<option value="Entertainment">Entertainment</option>
+<option value="Health">Health</option>
+<option value="Family">Family</option>
+<option value="Other">Other</option>
+</select>
 
-            </div>
+<input id="expenseDescription" class="full" placeholder="Description">
 
-          </div>
+<button class="full" onclick="addExpense()">+ Add expense</button>
 
-        </div>
+</div>
+</div>
+</div>
 
 
-        <!-- ANALYSIS -->
-        <div class="grid">
+<div class="grid">
 
-          <div class="card">
+<div class="card">
 
-            <h2>Spending analysis</h2>
-            <div class="card-subtitle">
-              Where your money went this month.
-            </div>
+<h2>Spending analysis</h2>
+<div class="card-subtitle">Where your money went this month.</div>
 
-            <div id="categoryAnalysis">
-              <div class="empty">
-                No expenses for this month yet.
-              </div>
-            </div>
+<div id="categoryAnalysis">
+<div class="empty">No expenses for this month yet.</div>
+</div>
 
-          </div>
+</div>
 
 
-          <div class="card">
+<div class="card">
 
-            <h2>Saving goals</h2>
-            <div class="card-subtitle">
-              Track the progress of your shared goals.
-            </div>
+<h2>Saving goals</h2>
+<div class="card-subtitle">Track the progress of your shared goals.</div>
 
-            <div id="goalsList">
-              <div class="empty">
-                No saving goals yet.
-              </div>
-            </div>
+<div id="goalsList">
+<div class="empty">No saving goals yet.</div>
+</div>
 
-          </div>
+</div>
+</div>
 
-        </div>
 
+<div class="card" style="margin-bottom:18px;">
 
-        <!-- TRANSACTIONS -->
-        <div class="card" style="margin-bottom:18px;">
+<h2>Recent transactions</h2>
+<div class="card-subtitle">
+Income and expenses for the selected month.
+</div>
 
-          <h2>Recent transactions</h2>
-          <div class="card-subtitle">
-            Income and expenses for the selected month.
-          </div>
+<div id="transactionsList">
+<div class="empty">No transactions yet.</div>
+</div>
 
-          <div id="transactionsList">
-            <div class="empty">
-              No transactions yet.
-            </div>
-          </div>
+</div>
 
-        </div>
 
+<div class="card">
 
-        <!-- INVITE -->
-        <div class="card">
+<h2>Shared space</h2>
 
-          <h2>Shared space</h2>
+<div class="card-subtitle">
+Share this code with your partner to join this space.
+</div>
 
-          <div class="card-subtitle">
-            Share this code with your partner to join this space.
-          </div>
+<div class="invite-small">
 
-          <div class="invite-small">
+<div>
+<div class="space-name">Invite code</div>
+<div id="inviteCodeDisplay" class="invite-small-code">------</div>
+</div>
 
-            <div>
-              <div class="space-name">Invite code</div>
-              <div id="inviteCodeDisplay" class="invite-small-code">
-                ------
-              </div>
-            </div>
+<button onclick="copyInviteCode()">Copy</button>
 
-            <button onclick="copyInviteCode()">
-              Copy
-            </button>
+</div>
+</div>
 
-          </div>
+</div>
+</main>
+</section>
 
-        </div>
 
-      </div>
-    </main>
+<div id="goalModal" class="modal hidden">
 
-  </section>
+<div class="modal-card">
 
+<h2>Create saving goal</h2>
 
-  <!-- GOAL MODAL -->
-  <div id="goalModal" class="modal hidden">
+<div class="card-subtitle">
+Example: Wedding, New Laptop, Vacation...
+</div>
 
-    <div class="modal-card">
+<input id="goalName" placeholder="Goal name">
 
-      <h2>Create saving goal</h2>
+<input id="goalTarget" type="number" min="0" placeholder="Target amount">
 
-      <div class="card-subtitle">
-        Example: Wedding, New Laptop, Vacation...
-      </div>
+<div class="modal-actions">
+<button class="secondary" onclick="closeGoalModal()">Cancel</button>
+<button onclick="addGoal()">Create goal</button>
+</div>
 
-      <input
-        id="goalName"
-        placeholder="Goal name"
-      >
+</div>
+</div>
 
-      <input
-        id="goalTarget"
-        type="number"
-        min="0"
-        placeholder="Target amount"
-      >
 
-      <div class="modal-actions">
-        <button class="secondary" onclick="closeGoalModal()">
-          Cancel
-        </button>
+<div id="resetModal" class="modal hidden">
 
-        <button onclick="addGoal()">
-          Create goal
-        </button>
-      </div>
+<div class="reset-modal-card">
 
-    </div>
+<h2>Manage data</h2>
 
-  </div>
+<div class="card-subtitle">
+Choose exactly what you want to delete.
+</div>
 
+<div class="reset-warning">
+⚠️ Deleted data cannot be recovered from the app.
+Your account, shared space and invite code will NOT be deleted.
+</div>
 
-  <!-- RESET DATA MODAL -->
-  <div id="resetModal" class="modal hidden">
+<div class="reset-select-actions">
 
-    <div class="reset-modal-card">
+<button class="secondary" onclick="selectAllResetOptions()">Select all</button>
 
-      <h2>Manage data</h2>
+<button class="secondary" onclick="clearAllResetOptions()">Clear all</button>
 
-      <div class="card-subtitle">
-        Choose exactly what you want to delete.
-      </div>
+</div>
 
-      <div class="reset-warning">
-        ⚠️ Deleted data cannot be recovered from the app.
-        Your account, shared space and invite code will NOT be deleted.
-      </div>
+<div class="reset-options">
 
-      <div class="reset-select-actions">
+<label class="reset-option">
 
-        <button
-          class="secondary"
-          onclick="selectAllResetOptions()"
-        >
-          Select all
-        </button>
+<input type="checkbox" id="resetIncome" onchange="updateResetSummary()">
 
-        <button
-          class="secondary"
-          onclick="clearAllResetOptions()"
-        >
-          Clear all
-        </button>
+<div class="reset-option-text">
 
-      </div>
+<div class="reset-option-title">Income</div>
 
-      <div class="reset-options">
+<div class="reset-option-description">
+Delete all income records.
+</div>
 
-        <label class="reset-option">
+</div>
 
-          <input
-            type="checkbox"
-            id="resetIncome"
-            onchange="updateResetSummary()"
-          >
+</label>
 
-          <div class="reset-option-text">
 
-            <div class="reset-option-title">
-              Income
-            </div>
+<label class="reset-option">
 
-            <div class="reset-option-description">
-              Delete all income records.
-            </div>
+<input type="checkbox" id="resetExpenses" onchange="updateResetSummary()">
 
-          </div>
+<div class="reset-option-text">
 
-        </label>
+<div class="reset-option-title">Expenses</div>
 
+<div class="reset-option-description">
+Delete all expense records.
+</div>
 
-        <label class="reset-option">
+</div>
 
-          <input
-            type="checkbox"
-            id="resetExpenses"
-            onchange="updateResetSummary()"
-          >
+</label>
 
-          <div class="reset-option-text">
 
-            <div class="reset-option-title">
-              Expenses
-            </div>
+<label class="reset-option">
 
-            <div class="reset-option-description">
-              Delete all expense records.
-            </div>
+<input type="checkbox" id="resetGoals" onchange="updateResetSummary()">
 
-          </div>
+<div class="reset-option-text">
 
-        </label>
+<div class="reset-option-title">Saving goals</div>
 
+<div class="reset-option-description">
+Delete all goals and their saving contributions.
+</div>
 
-        <label class="reset-option">
+</div>
 
-          <input
-            type="checkbox"
-            id="resetGoals"
-            onchange="updateResetSummary()"
-          >
+</label>
 
-          <div class="reset-option-text">
+</div>
 
-            <div class="reset-option-title">
-              Saving goals
-            </div>
 
-            <div class="reset-option-description">
-              Delete all goals and their saving contributions.
-            </div>
+<div id="resetSummary" class="reset-confirm-box">
+Nothing selected.
+</div>
 
-          </div>
 
-        </label>
+<div class="modal-actions">
 
-      </div>
+<button class="secondary" onclick="closeResetModal()">Cancel</button>
 
+<button class="danger-confirm" onclick="resetSelectedData()">
+Delete selected
+</button>
 
-      <div
-        id="resetSummary"
-        class="reset-confirm-box"
-      >
-        Nothing selected.
-      </div>
+</div>
 
-
-      <div class="modal-actions">
-
-        <button
-          class="secondary"
-          onclick="closeResetModal()"
-        >
-          Cancel
-        </button>
-
-        <button
-          class="danger-confirm"
-          onclick="resetSelectedData()"
-        >
-          Delete selected
-        </button>
-
-      </div>
-
-    </div>
-
-  </div>
+</div>
+</div>
 
 
 <script>
 
-  /* =========================
-     SUPABASE
-  ========================= */
+const SUPABASE_URL =
+"https://foswxvdnekimhkjkefdq.supabase.co";
 
-  const SUPABASE_URL =
-    "https://foswxvdnekimhkjkefdq.supabase.co";
+const SUPABASE_KEY =
+"sb_publishable_LlaYjmDPvzEU97_kr2azhg_jvkgAljS";
 
-  const SUPABASE_KEY =
-    "sb_publishable_LlaYjmDPvzEU97_kr2azhg_jvkgAljS";
+const supabaseClient =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
 
-  const supabaseClient =
-    window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
 
+let currentUser = null;
+let currentHousehold = null;
+let currentMember = null;
 
-  /* =========================
-     STATE
-  ========================= */
+let incomes = [];
+let expenses = [];
+let goals = [];
+let goalContributions = [];
+let householdMembers = [];
 
-  let currentUser = null;
-  let currentHousehold = null;
-  let currentMember = null;
 
-  let incomes = [];
-  let expenses = [];
-  let goals = [];
+function showMessage(id,message){
 
+const el=document.getElementById(id);
 
-  /* =========================
-     HELPERS
-  ========================= */
+el.textContent=message;
+el.classList.remove("hidden");
 
-  function showMessage(id, message) {
-    const el = document.getElementById(id);
+}
 
-    el.textContent = message;
-    el.classList.remove("hidden");
-  }
 
+function hideMessage(id){
 
-  function hideMessage(id) {
-    document.getElementById(id).classList.add("hidden");
-  }
+document.getElementById(id).classList.add("hidden");
 
+}
 
-  function money(value) {
-    return Number(value || 0).toLocaleString("en-US") + " EGP";
-  }
 
+function money(value){
 
-  function escapeHtml(value) {
-    return String(value ?? "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
-  }
+return Number(value||0).toLocaleString("en-US")+" EGP";
 
+}
 
-  function selectedMonthRange() {
 
-    const picker =
-      document.getElementById("monthPicker");
+function escapeHtml(value){
 
-    const value = picker.value;
+return String(value??"")
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
 
-    if (!value) {
-      const now = new Date();
+}
 
-      return {
-        start:
-          new Date(
-            now.getFullYear(),
-            now.getMonth(),
-            1
-          ).toISOString(),
 
-        end:
-          new Date(
-            now.getFullYear(),
-            now.getMonth() + 1,
-            1
-          ).toISOString()
-      };
-    }
+function selectedMonthRange(){
 
-    const [year, month] =
-      value.split("-").map(Number);
+const picker=document.getElementById("monthPicker");
 
-    return {
-      start:
-        new Date(
-          year,
-          month - 1,
-          1
-        ).toISOString(),
+const value=picker.value;
 
-      end:
-        new Date(
-          year,
-          month,
-          1
-        ).toISOString()
-    };
-  }
+if(!value){
 
-
-  function setCurrentMonth() {
+const now=new Date();
 
-    const now = new Date();
+return{
 
-    const month =
-      String(now.getMonth() + 1).padStart(2, "0");
+start:new Date(
+now.getFullYear(),
+now.getMonth(),
+1
+).toISOString(),
 
-    const value =
-      `${now.getFullYear()}-${month}`;
+end:new Date(
+now.getFullYear(),
+now.getMonth()+1,
+1
+).toISOString()
 
-    document.getElementById("monthPicker").value =
-      value;
-  }
+};
 
+}
 
-  /* =========================
-     AUTH
-  ========================= */
+const [year,month]=value.split("-").map(Number);
 
-  async function signUp() {
+return{
 
-    const email =
-      document.getElementById("email").value.trim();
+start:new Date(
+year,
+month-1,
+1
+).toISOString(),
 
-    const password =
-      document.getElementById("password").value;
+end:new Date(
+year,
+month,
+1
+).toISOString()
 
-    if (!email || !password) {
-      showMessage(
-        "authMessage",
-        "Please enter your email and password."
-      );
-      return;
-    }
+};
 
-    const { data, error } =
-      await supabaseClient.auth.signUp({
-        email,
-        password
-      });
+}
 
-    if (error) {
-      showMessage(
-        "authMessage",
-        error.message
-      );
-      return;
-    }
 
-    if (!data.session) {
+function setCurrentMonth(){
 
-      showMessage(
-        "authMessage",
-        "Account created. Check your email if confirmation is required, then log in."
-      );
+const now=new Date();
 
-      return;
-    }
+const month=String(
+now.getMonth()+1
+).padStart(2,"0");
 
-    showMessage(
-      "authMessage",
-      "Account created successfully."
-    );
-  }
+document.getElementById("monthPicker").value=
+`${now.getFullYear()}-${month}`;
 
+}
 
-  async function signIn() {
 
-    const email =
-      document.getElementById("email").value.trim();
+async function signUp(){
 
-    const password =
-      document.getElementById("password").value;
+const email=document.getElementById("email").value.trim();
 
-    if (!email || !password) {
-      showMessage(
-        "authMessage",
-        "Please enter your email and password."
-      );
-      return;
-    }
+const password=document.getElementById("password").value;
 
-    const { error } =
-      await supabaseClient.auth.signInWithPassword({
-        email,
-        password
-      });
+if(!email||!password){
 
-    if (error) {
-      showMessage(
-        "authMessage",
-        error.message
-      );
-      return;
-    }
+showMessage(
+"authMessage",
+"Please enter your email and password."
+);
 
-    hideMessage("authMessage");
+return;
 
-    await loadUserState();
-  }
+}
 
+const {data,error}=
+await supabaseClient.auth.signUp({
+email,
+password
+});
 
-  async function logout() {
+if(error){
 
-    await supabaseClient.auth.signOut();
+showMessage("authMessage",error.message);
 
-    currentUser = null;
-    currentHousehold = null;
-    currentMember = null;
+return;
 
-    showScreen("authScreen");
-  }
+}
 
+if(!data.session){
 
-  /* =========================
-     SCREEN
-  ========================= */
+showMessage(
+"authMessage",
+"Account created. Check your email if confirmation is required, then log in."
+);
 
-  function showScreen(id) {
+return;
 
-    document
-      .getElementById("authScreen")
-      .classList.add("hidden");
+}
 
-    document
-      .getElementById("householdScreen")
-      .classList.add("hidden");
+showMessage(
+"authMessage",
+"Account created successfully."
+);
 
-    document
-      .getElementById("homeScreen")
-      .classList.add("hidden");
+}
 
-    document
-      .getElementById(id)
-      .classList.remove("hidden");
-  }
 
+async function signIn(){
 
-  /* =========================
-     LOAD USER
-  ========================= */
+const email=document.getElementById("email").value.trim();
 
-  async function loadUserState() {
+const password=document.getElementById("password").value;
 
-    const {
-      data: {
-        user
-      }
-    } =
-      await supabaseClient.auth.getUser();
+if(!email||!password){
 
-    if (!user) {
-      showScreen("authScreen");
-      return;
-    }
+showMessage(
+"authMessage",
+"Please enter your email and password."
+);
 
-    currentUser = user;
+return;
 
-    const {
-      data: membership,
-      error
-    } =
-      await supabaseClient
-        .from("household_members")
-        .select(`
-          *,
-          households (
-            id,
-            name,
-            invite_code
-          )
-        `)
-        .eq("user_id", user.id)
-        .limit(1)
-        .maybeSingle();
+}
 
-    if (error) {
-      console.error(error);
+const {error}=
+await supabaseClient.auth.signInWithPassword({
+email,
+password
+});
 
-      showMessage(
-        "authMessage",
-        error.message
-      );
+if(error){
 
-      showScreen("authScreen");
+showMessage("authMessage",error.message);
 
-      return;
-    }
+return;
 
-    if (!membership) {
+}
 
-      showScreen("householdScreen");
+hideMessage("authMessage");
 
-      return;
-    }
+await loadUserState();
 
-    currentMember = membership;
-    currentHousehold = membership.households;
+}
 
-    document.getElementById(
-      "spaceNameDisplay"
-    ).textContent =
-      currentHousehold.name || "Our shared space";
 
-    document.getElementById(
-      "inviteCodeDisplay"
-    ).textContent =
-      currentHousehold.invite_code || "------";
+async function logout(){
 
-    setCurrentMonth();
+await supabaseClient.auth.signOut();
 
-    showScreen("homeScreen");
+currentUser=null;
+currentHousehold=null;
+currentMember=null;
 
-    await refreshData();
-  }
+showScreen("authScreen");
 
+}
 
-  /* =========================
-     HOUSEHOLD
-  ========================= */
 
-  async function createHousehold() {
+function showScreen(id){
 
-    const displayName =
-      document
-        .getElementById("displayNameCreate")
-        .value.trim();
+document.getElementById("authScreen").classList.add("hidden");
+document.getElementById("householdScreen").classList.add("hidden");
+document.getElementById("homeScreen").classList.add("hidden");
 
-    const spaceName =
-      document
-        .getElementById("spaceName")
-        .value.trim();
+document.getElementById(id).classList.remove("hidden");
 
-    if (!displayName || !spaceName) {
+}
 
-      showMessage(
-        "householdMessage",
-        "Please enter your name and space name."
-      );
 
-      return;
-    }
+async function loadUserState(){
 
-    const inviteCode =
-      Math.random()
-        .toString(36)
-        .substring(2, 8)
-        .toUpperCase();
+const {
+data:{user}
+}=await supabaseClient.auth.getUser();
 
-    const {
-      data: household,
-      error: householdError
-    } =
-      await supabaseClient
-        .from("households")
-        .insert({
-          name: spaceName,
-          invite_code: inviteCode
-        })
-        .select()
-        .single();
+if(!user){
 
-    if (householdError) {
+showScreen("authScreen");
 
-      showMessage(
-        "householdMessage",
-        householdError.message
-      );
+return;
 
-      return;
-    }
+}
 
+currentUser=user;
 
-    const {
-      error: memberError
-    } =
-      await supabaseClient
-        .from("household_members")
-        .insert({
-          household_id: household.id,
-          user_id: currentUser.id,
-          display_name: displayName
-        });
+const {
+data:membership,
+error
+}=
+await supabaseClient
+.from("household_members")
+.select(`
+*,
+households (
+id,
+name,
+invite_code
+)
+`)
+.eq("user_id",user.id)
+.limit(1)
+.maybeSingle();
 
+if(error){
 
-    if (memberError) {
+console.error(error);
 
-      showMessage(
-        "householdMessage",
-        memberError.message
-      );
+showMessage("authMessage",error.message);
 
-      return;
-    }
+showScreen("authScreen");
 
-    await loadUserState();
-  }
+return;
 
+}
 
-  async function joinHousehold() {
+if(!membership){
 
-    const displayName =
-      document
-        .getElementById("displayNameJoin")
-        .value.trim();
+showScreen("householdScreen");
 
-    const inviteCode =
-      document
-        .getElementById("inviteCode")
-        .value.trim()
-        .toUpperCase();
+return;
 
-    if (!displayName || !inviteCode) {
+}
 
-      showMessage(
-        "householdMessage",
-        "Please enter your name and invite code."
-      );
+currentMember=membership;
+currentHousehold=membership.households;
 
-      return;
-    }
+document.getElementById("spaceNameDisplay").textContent=
+currentHousehold.name||"Our shared space";
 
-    const {
-      data,
-      error
-    } =
-      await supabaseClient
-        .rpc(
-          "join_household_by_invite_code",
-          {
-            p_invite_code: inviteCode,
-            p_display_name: displayName
-          }
-        );
+document.getElementById("inviteCodeDisplay").textContent=
+currentHousehold.invite_code||"------";
 
-    if (error) {
+setCurrentMonth();
 
-      showMessage(
-        "householdMessage",
-        error.message
-      );
+showScreen("homeScreen");
 
-      return;
-    }
+await refreshData();
 
-    await loadUserState();
-  }
+}
 
 
-  /* =========================
-     INCOME
-  ========================= */
+async function createHousehold(){
 
-  async function addIncome() {
+const displayName=
+document.getElementById("displayNameCreate").value.trim();
 
-    const amount =
-      Number(
-        document
-          .getElementById("incomeAmount")
-          .value
-      );
+const spaceName=
+document.getElementById("spaceName").value.trim();
 
-    const source =
-      document
-        .getElementById("incomeSource")
-        .value.trim();
+if(!displayName||!spaceName){
 
-    if (!amount || amount <= 0) {
-      alert("Enter a valid amount.");
-      return;
-    }
+showMessage(
+"householdMessage",
+"Please enter your name and space name."
+);
 
-    if (!source) {
-      alert("Enter the income source.");
-      return;
-    }
+return;
 
-    const {
-      error
-    } =
-      await supabaseClient
-        .from("incomes")
-        .insert({
-          household_id:
-            currentHousehold.id,
+}
 
-          user_id:
-            currentUser.id,
+const inviteCode=
+Math.random()
+.toString(36)
+.substring(2,8)
+.toUpperCase();
 
-          amount,
-          source,
+const {
+data:household,
+error:householdError
+}=
+await supabaseClient
+.from("households")
+.insert({
+name:spaceName,
+invite_code:inviteCode
+})
+.select()
+.single();
 
-          income_date:
-            new Date().toISOString()
-        });
+if(householdError){
 
-    if (error) {
+showMessage(
+"householdMessage",
+householdError.message
+);
 
-      alert(error.message);
+return;
 
-      return;
-    }
+}
 
-    document.getElementById(
-      "incomeAmount"
-    ).value = "";
+const {error:memberError}=
+await supabaseClient
+.from("household_members")
+.insert({
+household_id:household.id,
+user_id:currentUser.id,
+display_name:displayName
+});
 
-    document.getElementById(
-      "incomeSource"
-    ).value = "";
+if(memberError){
 
-    await refreshData();
-  }
+showMessage(
+"householdMessage",
+memberError.message
+);
 
+return;
 
-  /* =========================
-     EXPENSE
-  ========================= */
+}
 
-  async function addExpense() {
+await loadUserState();
 
-    const amount =
-      Number(
-        document
-          .getElementById("expenseAmount")
-          .value
-      );
+}
 
-    const category =
-      document
-        .getElementById("expenseCategory")
-        .value;
 
-    const description =
-      document
-        .getElementById("expenseDescription")
-        .value.trim();
+async function joinHousehold(){
 
-    if (!amount || amount <= 0) {
-      alert("Enter a valid amount.");
-      return;
-    }
+const displayName=
+document.getElementById("displayNameJoin").value.trim();
 
-    const {
-      error
-    } =
-      await supabaseClient
-        .from("expenses")
-        .insert({
-          household_id:
-            currentHousehold.id,
+const inviteCode=
+document.getElementById("inviteCode")
+.value.trim()
+.toUpperCase();
 
-          user_id:
-            currentUser.id,
+if(!displayName||!inviteCode){
 
-          amount,
-          category,
+showMessage(
+"householdMessage",
+"Please enter your name and invite code."
+);
 
-          description:
-            description || null,
+return;
 
-          expense_date:
-            new Date().toISOString()
-        });
+}
 
-    if (error) {
+const {
+data,
+error
+}=
+await supabaseClient
+.rpc(
+"join_household_by_invite_code",
+{
+p_invite_code:inviteCode,
+p_display_name:displayName
+}
+);
 
-      alert(error.message);
+if(error){
 
-      return;
-    }
+showMessage(
+"householdMessage",
+error.message
+);
 
-    document.getElementById(
-      "expenseAmount"
-    ).value = "";
+return;
 
-    document.getElementById(
-      "expenseDescription"
-    ).value = "";
+}
 
-    await refreshData();
-  }
+await loadUserState();
 
+}
 
-  /* =========================
-     GOALS
-  ========================= */
 
-  function openGoalModal() {
+async function addIncome(){
 
-    document
-      .getElementById("goalModal")
-      .classList.remove("hidden");
-  }
+const amount=Number(
+document.getElementById("incomeAmount").value
+);
 
+const source=
+document.getElementById("incomeSource")
+.value.trim();
 
-  function closeGoalModal() {
+if(!amount||amount<=0){
 
-    document
-      .getElementById("goalModal")
-      .classList.add("hidden");
-  }
+alert("Enter a valid amount.");
 
+return;
 
-  async function addGoal() {
+}
 
-    const name =
-      document
-        .getElementById("goalName")
-        .value.trim();
+if(!source){
 
-    const target =
-      Number(
-        document
-          .getElementById("goalTarget")
-          .value
-      );
+alert("Enter the income source.");
 
-    if (!name || !target || target <= 0) {
+return;
 
-      alert(
-        "Enter a goal name and valid target amount."
-      );
+}
 
-      return;
-    }
+const {error}=
+await supabaseClient
+.from("incomes")
+.insert({
 
-    const {
-      error
-    } =
-      await supabaseClient
-        .from("goals")
-        .insert({
-          household_id:
-            currentHousehold.id,
+household_id:currentHousehold.id,
 
-          name,
+user_id:currentUser.id,
 
-          target_amount:
-            target,
+created_by:currentUser.id,
 
-          saved_amount:
-            0
-        });
+amount,
 
-    if (error) {
+source,
 
-      alert(error.message);
+income_date:new Date().toISOString()
 
-      return;
-    }
+});
 
-    document.getElementById(
-      "goalName"
-    ).value = "";
+if(error){
 
-    document.getElementById(
-      "goalTarget"
-    ).value = "";
+alert(error.message);
 
-    closeGoalModal();
+return;
 
-    await refreshData();
-  }
+}
 
+document.getElementById("incomeAmount").value="";
+document.getElementById("incomeSource").value="";
 
-  async function addSaving(
-    goalId,
-    currentSaved
-  ) {
+await refreshData();
 
-    const value =
-      prompt(
-        "How much would you like to save toward this goal?"
-      );
+}
 
-    const amount =
-      Number(value);
 
-    if (!amount || amount <= 0) {
-      return;
-    }
+async function addExpense(){
 
-    const {
-      error: contributionError
-    } =
-      await supabaseClient
-        .from("goal_contributions")
-        .insert({
-          goal_id:
-            goalId,
+const amount=Number(
+document.getElementById("expenseAmount").value
+);
 
-          household_id:
-            currentHousehold.id,
+const category=
+document.getElementById("expenseCategory").value;
 
-          user_id:
-            currentUser.id,
+const description=
+document.getElementById("expenseDescription")
+.value.trim();
 
-          amount
-        });
+if(!amount||amount<=0){
 
-    if (contributionError) {
+alert("Enter a valid amount.");
 
-      alert(contributionError.message);
+return;
 
-      return;
-    }
+}
 
+const {error}=
+await supabaseClient
+.from("expenses")
+.insert({
 
-    const {
-      error: goalError
-    } =
-      await supabaseClient
-        .from("goals")
-        .update({
-          saved_amount:
-            Number(currentSaved) + amount
-        })
-        .eq("id", goalId);
+household_id:currentHousehold.id,
 
-    if (goalError) {
+user_id:currentUser.id,
 
-      alert(goalError.message);
+created_by:currentUser.id,
 
-      return;
-    }
+amount,
 
-    await refreshData();
-  }
+category,
 
+description:description||null,
 
-  /* =========================
-     RESET / DELETE DATA
-  ========================= */
+expense_date:new Date().toISOString()
 
-  function openResetModal() {
+});
 
-    clearAllResetOptions();
+if(error){
 
-    document
-      .getElementById("resetModal")
-      .classList.remove("hidden");
+alert(error.message);
 
-    updateResetSummary();
-  }
+return;
 
+}
 
-  function closeResetModal() {
+document.getElementById("expenseAmount").value="";
+document.getElementById("expenseDescription").value="";
 
-    document
-      .getElementById("resetModal")
-      .classList.add("hidden");
-  }
+await refreshData();
 
+}
 
-  function selectAllResetOptions() {
 
-    document.getElementById("resetIncome").checked =
-      true;
+function openGoalModal(){
 
-    document.getElementById("resetExpenses").checked =
-      true;
+document.getElementById("goalModal")
+.classList.remove("hidden");
 
-    document.getElementById("resetGoals").checked =
-      true;
+}
 
-    updateResetSummary();
-  }
 
+function closeGoalModal(){
 
-  function clearAllResetOptions() {
+document.getElementById("goalModal")
+.classList.add("hidden");
 
-    document.getElementById("resetIncome").checked =
-      false;
+}
 
-    document.getElementById("resetExpenses").checked =
-      false;
 
-    document.getElementById("resetGoals").checked =
-      false;
+async function addGoal(){
 
-    updateResetSummary();
-  }
+const name=
+document.getElementById("goalName")
+.value.trim();
 
+const target=Number(
+document.getElementById("goalTarget").value
+);
 
-  function getSelectedResetItems() {
+if(!name||!target||target<=0){
 
-    const selected = [];
+alert(
+"Enter a goal name and valid target amount."
+);
 
-    if (
-      document.getElementById("resetIncome").checked
-    ) {
-      selected.push("Income");
-    }
+return;
 
-    if (
-      document.getElementById("resetExpenses").checked
-    ) {
-      selected.push("Expenses");
-    }
+}
 
-    if (
-      document.getElementById("resetGoals").checked
-    ) {
-      selected.push("Saving goals");
-    }
+const {error}=
+await supabaseClient
+.from("goals")
+.insert({
 
-    return selected;
-  }
+household_id:currentHousehold.id,
 
+name,
 
-  function updateResetSummary() {
+target_amount:target,
 
-    const selected =
-      getSelectedResetItems();
+saved_amount:0
 
-    const summary =
-      document.getElementById("resetSummary");
+});
 
-    if (!selected.length) {
+if(error){
 
-      summary.textContent =
-        "Nothing selected.";
+alert(error.message);
 
-      return;
-    }
+return;
 
-    summary.innerHTML =
-      "<strong>Selected:</strong> " +
-      selected
-        .map(item => escapeHtml(item))
-        .join(", ") +
-      "<br><br>This data will be permanently deleted from your shared space.";
-  }
+}
 
+document.getElementById("goalName").value="";
+document.getElementById("goalTarget").value="";
 
-  async function resetSelectedData() {
+closeGoalModal();
 
-    if (!currentHousehold) {
+await refreshData();
 
-      alert(
-        "No shared space is currently selected."
-      );
+}
 
-      return;
-    }
 
+async function addSaving(goalId,currentSaved){
 
-    const deleteIncome =
-      document.getElementById("resetIncome").checked;
+const value=prompt(
+"How much would you like to save toward this goal?"
+);
 
-    const deleteExpenses =
-      document.getElementById("resetExpenses").checked;
+const amount=Number(value);
 
-    const deleteGoals =
-      document.getElementById("resetGoals").checked;
+if(!amount||amount<=0){
 
+return;
 
-    if (
-      !deleteIncome &&
-      !deleteExpenses &&
-      !deleteGoals
-    ) {
+}
 
-      alert(
-        "Please select at least one type of data to delete."
-      );
+const {error:contributionError}=
+await supabaseClient
+.from("goal_contributions")
+.insert({
 
-      return;
-    }
+goal_id:goalId,
 
+household_id:currentHousehold.id,
 
-    const selected =
-      getSelectedResetItems();
+user_id:currentUser.id,
 
+created_by:currentUser.id,
 
-    const confirmed =
-      confirm(
-        "Are you sure you want to delete:\n\n" +
-        selected.join("\n") +
-        "\n\nThis action cannot be undone."
-      );
+amount
 
+});
 
-    if (!confirmed) {
-      return;
-    }
+if(contributionError){
 
+alert(contributionError.message);
 
-    try {
+return;
 
-      /* DELETE INCOME */
+}
 
-      if (deleteIncome) {
+const {error:goalError}=
+await supabaseClient
+.from("goals")
+.update({
 
-        const {
-          error
-        } =
-          await supabaseClient
-            .from("incomes")
-            .delete()
-            .eq(
-              "household_id",
-              currentHousehold.id
-            );
+saved_amount:
+Number(currentSaved)+amount
 
-        if (error) {
-          throw new Error(
-            "Income: " + error.message
-          );
-        }
-      }
+})
+.eq("id",goalId);
 
+if(goalError){
 
-      /* DELETE EXPENSES */
+alert(goalError.message);
 
-      if (deleteExpenses) {
+return;
 
-        const {
-          error
-        } =
-          await supabaseClient
-            .from("expenses")
-            .delete()
-            .eq(
-              "household_id",
-              currentHousehold.id
-            );
+}
 
-        if (error) {
-          throw new Error(
-            "Expenses: " + error.message
-          );
-        }
-      }
+await refreshData();
 
+}
 
-      /* DELETE GOALS */
 
-      if (deleteGoals) {
+function openResetModal(){
 
-        /*
-          First get all goals belonging
-          to this household.
-        */
+clearAllResetOptions();
 
-        const {
-          data: householdGoals,
-          error: goalsFetchError
-        } =
-          await supabaseClient
-            .from("goals")
-            .select("id")
-            .eq(
-              "household_id",
-              currentHousehold.id
-            );
+document.getElementById("resetModal")
+.classList.remove("hidden");
 
-        if (goalsFetchError) {
-          throw new Error(
-            "Goals: " +
-            goalsFetchError.message
-          );
-        }
+updateResetSummary();
 
+}
 
-        /*
-          Delete contributions first
-          because they belong to goals.
-        */
 
-        const {
-          error: contributionDeleteError
-        } =
-          await supabaseClient
-            .from("goal_contributions")
-            .delete()
-            .eq(
-              "household_id",
-              currentHousehold.id
-            );
+function closeResetModal(){
 
-        if (contributionDeleteError) {
-          throw new Error(
-            "Goal contributions: " +
-            contributionDeleteError.message
-          );
-        }
+document.getElementById("resetModal")
+.classList.add("hidden");
 
+}
 
-        /*
-          Delete the goals themselves.
-        */
 
-        const {
-          error: goalDeleteError
-        } =
-          await supabaseClient
-            .from("goals")
-            .delete()
-            .eq(
-              "household_id",
-              currentHousehold.id
-            );
+function selectAllResetOptions(){
 
-        if (goalDeleteError) {
-          throw new Error(
-            "Goals: " +
-            goalDeleteError.message
-          );
-        }
-      }
+document.getElementById("resetIncome").checked=true;
+document.getElementById("resetExpenses").checked=true;
+document.getElementById("resetGoals").checked=true;
 
+updateResetSummary();
 
-      closeResetModal();
+}
 
-      alert(
-        "✅ Selected data was deleted successfully."
-      );
 
-      await refreshData();
+function clearAllResetOptions(){
 
-    } catch (error) {
+document.getElementById("resetIncome").checked=false;
+document.getElementById("resetExpenses").checked=false;
+document.getElementById("resetGoals").checked=false;
 
-      console.error(error);
+updateResetSummary();
 
-      alert(
-        "❌ Could not delete the selected data.\n\n" +
-        error.message
-      );
-    }
-  }
+}
 
 
-  /* =========================
-     LOAD DATA
-  ========================= */
+function getSelectedResetItems(){
 
-  async function refreshData() {
+const selected=[];
 
-    if (!currentHousehold) {
-      return;
-    }
+if(document.getElementById("resetIncome").checked)
+selected.push("Income");
 
-    const range =
-      selectedMonthRange();
+if(document.getElementById("resetExpenses").checked)
+selected.push("Expenses");
 
+if(document.getElementById("resetGoals").checked)
+selected.push("Saving goals");
 
-    const {
-      data: incomeData,
-      error: incomeError
-    } =
-      await supabaseClient
-        .from("incomes")
-        .select("*")
-        .eq(
-          "household_id",
-          currentHousehold.id
-        )
-        .gte(
-          "income_date",
-          range.start
-        )
-        .lt(
-          "income_date",
-          range.end
-        )
-        .order(
-          "income_date",
-          { ascending: false }
-        );
+return selected;
 
+}
 
-    const {
-      data: expenseData,
-      error: expenseError
-    } =
-      await supabaseClient
-        .from("expenses")
-        .select("*")
-        .eq(
-          "household_id",
-          currentHousehold.id
-        )
-        .gte(
-          "expense_date",
-          range.start
-        )
-        .lt(
-          "expense_date",
-          range.end
-        )
-        .order(
-          "expense_date",
-          { ascending: false }
-        );
 
+function updateResetSummary(){
 
-    const {
-      data: goalData,
-      error: goalError
-    } =
-      await supabaseClient
-        .from("goals")
-        .select("*")
-        .eq(
-          "household_id",
-          currentHousehold.id
-        )
-        .order(
-          "created_at",
-          { ascending: false }
-        );
+const selected=getSelectedResetItems();
 
+const summary=document.getElementById("resetSummary");
 
-    if (incomeError) {
-      console.error(incomeError);
-    }
+if(!selected.length){
 
-    if (expenseError) {
-      console.error(expenseError);
-    }
+summary.textContent="Nothing selected.";
 
-    if (goalError) {
-      console.error(goalError);
-    }
+return;
 
+}
 
-    incomes =
-      incomeData || [];
+summary.innerHTML=
+"<strong>Selected:</strong> "+
+selected.map(item=>escapeHtml(item)).join(", ")+
+"<br><br>This data will be permanently deleted from your shared space.";
 
-    expenses =
-      expenseData || [];
+}
 
-    goals =
-      goalData || [];
 
+async function resetSelectedData(){
 
-    renderDashboard();
-    renderGoals();
-    renderTransactions();
-    renderCategoryAnalysis();
-  }
+if(!currentHousehold){
 
+alert("No shared space is currently selected.");
 
-  /* =========================
-     DASHBOARD
-  ========================= */
+return;
 
-  function renderDashboard() {
+}
 
-    const totalIncome =
-      incomes.reduce(
-        (sum, item) =>
-          sum + Number(item.amount || 0),
-        0
-      );
+const deleteIncome=
+document.getElementById("resetIncome").checked;
 
+const deleteExpenses=
+document.getElementById("resetExpenses").checked;
 
-    const totalExpenses =
-      expenses.reduce(
-        (sum, item) =>
-          sum + Number(item.amount || 0),
-        0
-      );
+const deleteGoals=
+document.getElementById("resetGoals").checked;
 
+if(!deleteIncome&&!deleteExpenses&&!deleteGoals){
 
-    const remaining =
-      totalIncome - totalExpenses;
+alert(
+"Please select at least one type of data to delete."
+);
 
+return;
 
-    const rate =
-      totalIncome > 0
-        ? Math.round(
-            ((totalIncome - totalExpenses)
-              / totalIncome) * 100
-          )
-        : 0;
+}
 
+const selected=getSelectedResetItems();
 
-    document.getElementById(
-      "monthlyIncome"
-    ).textContent =
-      money(totalIncome);
+const confirmed=confirm(
+"Are you sure you want to delete:\n\n"+
+selected.join("\n")+
+"\n\nThis action cannot be undone."
+);
 
+if(!confirmed)return;
 
-    document.getElementById(
-      "monthlyExpenses"
-    ).textContent =
-      money(totalExpenses);
+try{
 
+if(deleteIncome){
 
-    const remainingEl =
-      document.getElementById(
-        "monthlyRemaining"
-      );
+const {error}=
+await supabaseClient
+.from("incomes")
+.delete()
+.eq(
+"household_id",
+currentHousehold.id
+);
 
-    remainingEl.textContent =
-      money(remaining);
+if(error)
+throw new Error("Income: "+error.message);
 
-    remainingEl.className =
-      "stat-value " +
-      (
-        remaining >= 0
-          ? "positive"
-          : "negative"
-      );
+}
 
 
-    const savingRateEl =
-      document.getElementById(
-        "savingRate"
-      );
+if(deleteExpenses){
 
-    savingRateEl.textContent =
-      Math.max(rate, 0) + "%";
+const {error}=
+await supabaseClient
+.from("expenses")
+.delete()
+.eq(
+"household_id",
+currentHousehold.id
+);
 
-    savingRateEl.className =
-      "stat-value " +
-      (
-        rate >= 0
-          ? "positive"
-          : "negative"
-      );
-  }
+if(error)
+throw new Error("Expenses: "+error.message);
 
+}
 
-  /* =========================
-     CATEGORY ANALYSIS
-  ========================= */
 
-  function renderCategoryAnalysis() {
+if(deleteGoals){
 
-    const container =
-      document.getElementById(
-        "categoryAnalysis"
-      );
+const {
+error:contributionDeleteError
+}=
+await supabaseClient
+.from("goal_contributions")
+.delete()
+.eq(
+"household_id",
+currentHousehold.id
+);
 
-    if (!expenses.length) {
+if(contributionDeleteError)
+throw new Error(
+"Goal contributions: "+
+contributionDeleteError.message
+);
 
-      container.innerHTML =
-        `<div class="empty">
-          No expenses for this month yet.
-        </div>`;
+const {error:goalDeleteError}=
+await supabaseClient
+.from("goals")
+.delete()
+.eq(
+"household_id",
+currentHousehold.id
+);
 
-      return;
-    }
+if(goalDeleteError)
+throw new Error(
+"Goals: "+
+goalDeleteError.message
+);
 
+}
 
-    const categories = {};
+closeResetModal();
 
+alert(
+"✅ Selected data was deleted successfully."
+);
 
-    expenses.forEach(expense => {
+await refreshData();
 
-      const category =
-        expense.category || "Other";
+}catch(error){
 
-      categories[category] =
-        (categories[category] || 0)
-        + Number(expense.amount || 0);
-    });
+console.error(error);
 
+alert(
+"❌ Could not delete the selected data.\n\n"+
+error.message
+);
 
-    const entries =
-      Object.entries(categories)
-        .sort(
-          (a, b) => b[1] - a[1]
-        );
+}
 
+}
 
-    const max =
-      entries[0]?.[1] || 1;
 
+async function refreshData(){
 
-    container.innerHTML =
-      entries
-        .map(([category, amount]) => {
+if(!currentHousehold)return;
 
-          const width =
-            Math.max(
-              5,
-              Math.round(
-                (amount / max) * 100
-              )
-            );
+const range=selectedMonthRange();
 
-          return `
-            <div class="category-row">
+const {
+data:incomeData,
+error:incomeError
+}=
+await supabaseClient
+.from("incomes")
+.select("*")
+.eq(
+"household_id",
+currentHousehold.id
+)
+.gte(
+"income_date",
+range.start
+)
+.lt(
+"income_date",
+range.end
+)
+.order(
+"income_date",
+{ascending:false}
+);
 
-              <div class="category-head">
 
-                <span class="category-name">
-                  ${escapeHtml(category)}
-                </span>
+const {
+data:expenseData,
+error:expenseError
+}=
+await supabaseClient
+.from("expenses")
+.select("*")
+.eq(
+"household_id",
+currentHousehold.id
+)
+.gte(
+"expense_date",
+range.start
+)
+.lt(
+"expense_date",
+range.end
+)
+.order(
+"expense_date",
+{ascending:false}
+);
 
-                <span class="category-value">
-                  ${money(amount)}
-                </span>
 
-              </div>
+const {
+data:goalData,
+error:goalError
+}=
+await supabaseClient
+.from("goals")
+.select("*")
+.eq(
+"household_id",
+currentHousehold.id
+)
+.order(
+"created_at",
+{ascending:false}
+);
 
-              <div class="bar">
 
-                <div
-                  class="bar-fill"
-                  style="width:${width}%"
-                ></div>
+const {
+data:memberData,
+error:memberError
+}=
+await supabaseClient
+.from("household_members")
+.select("user_id,display_name")
+.eq(
+"household_id",
+currentHousehold.id
+);
 
-              </div>
 
-            </div>
-          `;
+const {
+data:contributionData,
+error:contributionError
+}=
+await supabaseClient
+.from("goal_contributions")
+.select("*")
+.eq(
+"household_id",
+currentHousehold.id
+)
+.gte(
+"created_at",
+range.start
+)
+.lt(
+"created_at",
+range.end
+)
+.order(
+"created_at",
+{ascending:false}
+);
 
-        })
-        .join("");
-  }
 
+if(incomeError)console.error(incomeError);
+if(expenseError)console.error(expenseError);
+if(goalError)console.error(goalError);
+if(memberError)console.error(memberError);
+if(contributionError)console.error(contributionError);
 
-  /* =========================
-     GOALS UI
-  ========================= */
+incomes=incomeData||[];
+expenses=expenseData||[];
+goals=goalData||[];
+householdMembers=memberData||[];
+goalContributions=contributionData||[];
 
-  function renderGoals() {
+renderDashboard();
+renderGoals();
+renderTransactions();
+renderCategoryAnalysis();
 
-    const container =
-      document.getElementById(
-        "goalsList"
-      );
+}
 
 
-    if (!goals.length) {
+function renderDashboard(){
 
-      container.innerHTML =
-        `<div class="empty">
-          No saving goals yet.
-        </div>`;
+const totalIncome=
+incomes.reduce(
+(sum,item)=>sum+Number(item.amount||0),
+0
+);
 
-      return;
-    }
+const totalExpenses=
+expenses.reduce(
+(sum,item)=>sum+Number(item.amount||0),
+0
+);
 
+const remaining=
+totalIncome-totalExpenses;
 
-    container.innerHTML =
-      goals.map(goal => {
+const rate=
+totalIncome>0
+?Math.round(
+((totalIncome-totalExpenses)/totalIncome)*100
+)
+:0;
 
-        const target =
-          Number(
-            goal.target_amount || 0
-          );
+document.getElementById("monthlyIncome")
+.textContent=money(totalIncome);
 
-        const saved =
-          Number(
-            goal.saved_amount || 0
-          );
+document.getElementById("monthlyExpenses")
+.textContent=money(totalExpenses);
 
-        const progress =
-          target > 0
-            ? Math.min(
-                100,
-                Math.round(
-                  (saved / target) * 100
-                )
-              )
-            : 0;
+const remainingEl=
+document.getElementById("monthlyRemaining");
 
-        const remaining =
-          Math.max(
-            0,
-            target - saved
-          );
+remainingEl.textContent=money(remaining);
 
+remainingEl.className=
+"stat-value "+
+(remaining>=0?"positive":"negative");
 
-        return `
-          <div class="goal">
+const savingRateEl=
+document.getElementById("savingRate");
 
-            <div class="goal-head">
+savingRateEl.textContent=Math.max(rate,0)+"%";
 
-              <div>
-                <div class="goal-name">
-                  ${escapeHtml(goal.name)}
-                </div>
+savingRateEl.className=
+"stat-value "+
+(rate>=0?"positive":"negative");
 
-                <div class="goal-amount">
-                  ${money(saved)}
-                  / ${money(target)}
-                </div>
-              </div>
+}
 
-              <button
-                class="secondary"
-                style="padding:8px 10px;font-size:12px;"
-                onclick="addSaving(
-                  '${goal.id}',
-                  ${saved}
-                )"
-              >
-                + Save
-              </button>
 
-            </div>
+function renderCategoryAnalysis(){
 
-            <div class="goal-bar">
-              <div
-                class="goal-fill"
-                style="width:${progress}%"
-              ></div>
-            </div>
+const container=
+document.getElementById("categoryAnalysis");
 
-            <div class="goal-footer">
+if(!expenses.length){
 
-              <span>
-                ${progress}% complete
-              </span>
+container.innerHTML=
+`<div class="empty">
+No expenses for this month yet.
+</div>`;
 
-              <span>
-                ${money(remaining)} remaining
-              </span>
+return;
 
-            </div>
+}
 
-          </div>
-        `;
+const categories={};
 
-      }).join("");
-  }
+expenses.forEach(expense=>{
 
+const category=expense.category||"Other";
 
-  /* =========================
-     TRANSACTIONS
-  ========================= */
+categories[category]=
+(categories[category]||0)+
+Number(expense.amount||0);
 
-  function renderTransactions() {
+});
 
-    const container =
-      document.getElementById(
-        "transactionsList"
-      );
+const entries=
+Object.entries(categories)
+.sort((a,b)=>b[1]-a[1]);
 
+const max=entries[0]?.[1]||1;
 
-    const combined = [
+container.innerHTML=
+entries.map(([category,amount])=>{
 
-      ...incomes.map(item => ({
-        type: "income",
-        date: item.income_date,
-        title:
-          item.source || "Income",
-        amount:
-          Number(item.amount || 0)
-      })),
+const width=Math.max(
+5,
+Math.round((amount/max)*100)
+);
 
-      ...expenses.map(item => ({
-        type: "expense",
-        date: item.expense_date,
-        title:
-          item.description ||
-          item.category ||
-          "Expense",
-        category:
-          item.category,
-        amount:
-          Number(item.amount || 0)
-      }))
+return `
+<div class="category-row">
 
-    ]
-    .sort(
-      (a, b) =>
-        new Date(b.date) -
-        new Date(a.date)
-    );
+<div class="category-head">
 
+<span class="category-name">
+${escapeHtml(category)}
+</span>
 
-    if (!combined.length) {
+<span class="category-value">
+${money(amount)}
+</span>
 
-      container.innerHTML =
-        `<div class="empty">
-          No transactions for this month.
-        </div>`;
+</div>
 
-      return;
-    }
+<div class="bar">
 
+<div
+class="bar-fill"
+style="width:${width}%"
+></div>
 
-    container.innerHTML =
-      combined
-        .slice(0, 20)
-        .map(item => {
+</div>
 
-          const date =
-            new Date(item.date)
-              .toLocaleDateString(
-                "en-GB",
-                {
-                  day: "2-digit",
-                  month: "short"
-                }
-              );
+</div>
+`;
 
+}).join("");
 
-          return `
-            <div class="transaction">
+}
 
-              <div>
 
-                <div class="transaction-title">
-                  ${escapeHtml(item.title)}
-                </div>
+function renderGoals(){
 
-                <div class="transaction-date">
-                  ${escapeHtml(item.category || "")}
-                  ${item.category ? " • " : ""}
-                  ${date}
-                </div>
+const container=
+document.getElementById("goalsList");
 
-              </div>
+if(!goals.length){
 
-              <div class="${item.type}">
-                ${item.type === "income" ? "+" : "-"}
-                ${money(item.amount)}
-              </div>
+container.innerHTML=
+`<div class="empty">
+No saving goals yet.
+</div>`;
 
-            </div>
-          `;
+return;
 
-        })
-        .join("");
-  }
+}
 
+container.innerHTML=
+goals.map(goal=>{
 
-  /* =========================
-     INVITE
-  ========================= */
+const target=
+Number(goal.target_amount||0);
 
-  async function copyInviteCode() {
+const saved=
+Number(goal.saved_amount||0);
 
-    const code =
-      currentHousehold?.invite_code;
+const progress=
+target>0
+?Math.min(
+100,
+Math.round((saved/target)*100)
+)
+:0;
 
-    if (!code) {
-      return;
-    }
+const remaining=
+Math.max(0,target-saved);
 
-    try {
+return `
+<div class="goal">
 
-      await navigator.clipboard.writeText(code);
+<div class="goal-head">
 
-      alert(
-        "Invite code copied: " + code
-      );
+<div>
 
-    } catch {
+<div class="goal-name">
+${escapeHtml(goal.name)}
+</div>
 
-      alert(
-        "Invite code: " + code
-      );
-    }
-  }
+<div class="goal-amount">
+${money(saved)}
+/ ${money(target)}
+</div>
 
+</div>
 
-  /* =========================
-     AUTH LISTENER
-  ========================= */
+<button
+class="secondary"
+style="padding:8px 10px;font-size:12px;"
+onclick="addSaving('${goal.id}',${saved})"
+>
++ Save
+</button>
 
-  supabaseClient.auth.onAuthStateChange(
-    async (event, session) => {
+</div>
 
-      if (session?.user) {
+<div class="goal-bar">
 
-        currentUser =
-          session.user;
+<div
+class="goal-fill"
+style="width:${progress}%"
+></div>
 
-        await loadUserState();
+</div>
 
-      } else {
+<div class="goal-footer">
 
-        showScreen("authScreen");
+<span>
+${progress}% complete
+</span>
 
-      }
+<span>
+${money(remaining)} remaining
+</span>
 
-    }
-  );
+</div>
 
+</div>
+`;
 
-  /* =========================
-     START
-  ========================= */
+}).join("");
 
-  (async function init() {
+}
 
-    const {
-      data: {
-        session
-      }
-    } =
-      await supabaseClient.auth.getSession();
 
-    if (session?.user) {
+function getMemberName(userId){
 
-      currentUser =
-        session.user;
+if(!userId)return "";
 
-      await loadUserState();
+const member=
+householdMembers.find(
+item=>item.user_id===userId
+);
 
-    } else {
+return member?.display_name||"";
 
-      showScreen("authScreen");
+}
 
-    }
 
-  })();
+function renderTransactions(){
+
+const container=
+document.getElementById("transactionsList");
+
+const combined=[
+
+...incomes.map(item=>({
+
+type:"income",
+
+date:item.income_date,
+
+title:item.source||"Income",
+
+amount:Number(item.amount||0),
+
+userId:
+item.created_by||
+item.user_id
+
+})),
+
+...expenses.map(item=>({
+
+type:"expense",
+
+date:item.expense_date,
+
+title:
+item.description||
+item.category||
+"Expense",
+
+category:item.category,
+
+amount:Number(item.amount||0),
+
+userId:
+item.created_by||
+item.user_id
+
+})),
+
+...goalContributions.map(item=>({
+
+type:"saving",
+
+date:item.created_at,
+
+title:"Saving contribution",
+
+amount:Number(item.amount||0),
+
+userId:
+item.created_by||
+item.user_id
+
+}))
+
+]
+.sort(
+(a,b)=>
+new Date(b.date)-new Date(a.date)
+);
+
+
+if(!combined.length){
+
+container.innerHTML=
+`<div class="empty">
+No transactions for this month.
+</div>`;
+
+return;
+
+}
+
+
+container.innerHTML=
+combined
+.slice(0,20)
+.map(item=>{
+
+const date=
+new Date(item.date)
+.toLocaleDateString(
+"en-GB",
+{
+day:"2-digit",
+month:"short"
+}
+);
+
+const memberName=
+getMemberName(item.userId);
+
+const amountClass=
+item.type==="income"
+?"income"
+:item.type==="expense"
+?"expense"
+:"saving";
+
+const amountPrefix=
+item.type==="income"
+?"+"
+:item.type==="expense"
+?"-"
+:"+";
+
+return `
+<div class="transaction">
+
+<div>
+
+<div class="transaction-title">
+${escapeHtml(item.title)}
+</div>
+
+<div class="transaction-date">
+
+${escapeHtml(item.category||"")}
+
+${item.category?" • ":""}
+
+${date}
+
+${memberName
+?` • By ${escapeHtml(memberName)}`
+:""}
+
+</div>
+
+</div>
+
+<div class="${amountClass}">
+${amountPrefix}
+${money(item.amount)}
+</div>
+
+</div>
+`;
+
+})
+.join("");
+
+}
+
+
+async function copyInviteCode(){
+
+const code=currentHousehold?.invite_code;
+
+if(!code)return;
+
+try{
+
+await navigator.clipboard.writeText(code);
+
+alert(
+"Invite code copied: "+code
+);
+
+}catch{
+
+alert(
+"Invite code: "+code
+);
+
+}
+
+}
+
+
+supabaseClient.auth.onAuthStateChange(
+async(event,session)=>{
+
+if(session?.user){
+
+currentUser=session.user;
+
+await loadUserState();
+
+}else{
+
+showScreen("authScreen");
+
+}
+
+});
+
+
+(async function init(){
+
+const {
+data:{session}
+}=
+await supabaseClient.auth.getSession();
+
+if(session?.user){
+
+currentUser=session.user;
+
+await loadUserState();
+
+}else{
+
+showScreen("authScreen");
+
+}
+
+})();
 
 </script>
 
