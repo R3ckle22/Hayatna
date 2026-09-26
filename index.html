@@ -23,26 +23,26 @@
       max-width: 430px;
       min-height: 100vh;
       margin: auto;
-      background: white;
-      padding: 30px 20px;
+      background: #fff;
+      padding: 28px 20px;
     }
 
     .logo {
       font-size: 38px;
       font-weight: 700;
-      margin-top: 50px;
-      margin-bottom: 8px;
+      margin: 25px 0 5px;
     }
 
     .subtitle {
       color: #777;
-      margin-bottom: 35px;
+      margin-bottom: 30px;
     }
 
     .card {
       border: 1px solid #eee;
       border-radius: 20px;
       padding: 22px;
+      margin-bottom: 16px;
       box-shadow: 0 5px 20px rgba(0,0,0,.04);
     }
 
@@ -53,7 +53,7 @@
     input {
       width: 100%;
       padding: 15px;
-      margin: 8px 0;
+      margin: 7px 0;
       border: 1px solid #ddd;
       border-radius: 12px;
       font-size: 16px;
@@ -76,10 +76,30 @@
       color: #222;
     }
 
+    button.logout {
+      background: #f3dddd;
+      color: #8b2222;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .code {
+      font-size: 30px;
+      font-weight: bold;
+      letter-spacing: 4px;
+      text-align: center;
+      padding: 15px;
+      background: #f5f5f5;
+      border-radius: 12px;
+      margin: 15px 0;
+    }
+
     #message {
       margin-top: 15px;
-      font-size: 14px;
-      color: #777;
+      color: #666;
+      line-height: 1.5;
     }
   </style>
 </head>
@@ -91,25 +111,138 @@
   <div class="logo">U&me</div>
   <div class="subtitle">Our shared space</div>
 
-  <div class="card">
+  <!-- AUTH -->
+  <div id="authScreen">
 
-    <h2>Welcome</h2>
+    <div class="card">
 
-    <input id="email" type="email" placeholder="Email">
+      <h2>Welcome</h2>
 
-    <input id="password" type="password" placeholder="Password">
+      <input
+        id="email"
+        type="email"
+        placeholder="Email"
+      >
 
-    <button onclick="signIn()">Login</button>
+      <input
+        id="password"
+        type="password"
+        placeholder="Password"
+      >
 
-    <button class="secondary" onclick="signUp()">
-      Create account
-    </button>
+      <button onclick="signIn()">
+        Login
+      </button>
 
-    <div id="message"></div>
+      <button class="secondary" onclick="signUp()">
+        Create account
+      </button>
+
+    </div>
 
   </div>
 
+
+  <!-- HOUSEHOLD -->
+  <div id="householdScreen" class="hidden">
+
+    <div class="card">
+
+      <h2>Let's create our space</h2>
+
+      <input
+        id="displayName"
+        type="text"
+        placeholder="Your name"
+      >
+
+      <button onclick="createHousehold()">
+        Create U&me Space
+      </button>
+
+    </div>
+
+
+    <div class="card">
+
+      <h2>Join a space</h2>
+
+      <input
+        id="joinName"
+        type="text"
+        placeholder="Your name"
+      >
+
+      <input
+        id="inviteCode"
+        type="text"
+        placeholder="Invite code"
+      >
+
+      <button onclick="joinHousehold()">
+        Join U&me Space
+      </button>
+
+    </div>
+
+    <button class="logout" onclick="logout()">
+      Logout
+    </button>
+
+  </div>
+
+
+  <!-- HOME -->
+  <div id="homeScreen" class="hidden">
+
+    <div class="card">
+
+      <h2 id="welcomeText">
+        Welcome
+      </h2>
+
+      <p>
+        Your U&me space is ready.
+      </p>
+
+      <p>
+        Household:
+        <strong id="householdName"></strong>
+      </p>
+
+    </div>
+
+
+    <div class="card">
+
+      <h2>Invite your partner</h2>
+
+      <p>
+        Share this code with your partner:
+      </p>
+
+      <div class="code" id="myInviteCode">
+        ------
+      </div>
+
+      <button onclick="copyInviteCode()">
+        Copy Invite Code
+      </button>
+
+    </div>
+
+
+    <button class="logout" onclick="logout()">
+      Logout
+    </button>
+
+  </div>
+
+
+  <div id="message"></div>
+
 </div>
+
 
 <script>
 
@@ -125,9 +258,31 @@ supabase.createClient(
   SUPABASE_KEY
 );
 
+
+let currentUser = null;
+let currentHousehold = null;
+
+
 function showMessage(message) {
   document.getElementById("message").textContent = message;
 }
+
+
+function showScreen(screen) {
+
+  document.getElementById("authScreen")
+    .classList.add("hidden");
+
+  document.getElementById("householdScreen")
+    .classList.add("hidden");
+
+  document.getElementById("homeScreen")
+    .classList.add("hidden");
+
+  document.getElementById(screen)
+    .classList.remove("hidden");
+}
+
 
 async function signUp() {
 
@@ -138,7 +293,7 @@ async function signUp() {
     document.getElementById("password").value;
 
   if (!email || !password) {
-    showMessage("Please enter email and password.");
+    showMessage("Enter email and password.");
     return;
   }
 
@@ -146,8 +301,8 @@ async function signUp() {
 
   const { error } =
     await supabaseClient.auth.signUp({
-      email: email,
-      password: password
+      email,
+      password
     });
 
   if (error) {
@@ -160,6 +315,7 @@ async function signUp() {
   );
 }
 
+
 async function signIn() {
 
   const email =
@@ -169,7 +325,7 @@ async function signIn() {
     document.getElementById("password").value;
 
   if (!email || !password) {
-    showMessage("Please enter email and password.");
+    showMessage("Enter email and password.");
     return;
   }
 
@@ -177,8 +333,8 @@ async function signIn() {
 
   const { data, error } =
     await supabaseClient.auth.signInWithPassword({
-      email: email,
-      password: password
+      email,
+      password
     });
 
   if (error) {
@@ -186,9 +342,238 @@ async function signIn() {
     return;
   }
 
-  showMessage("Login successful!");
+  currentUser = data.user;
 
+  await loadUserState();
 }
+
+
+async function loadUserState() {
+
+  if (!currentUser) return;
+
+  const { data, error } =
+    await supabaseClient
+      .from("household_members")
+      .select(`
+        household_id,
+        display_name,
+        households (
+          id,
+          name,
+          invite_code
+        )
+      `)
+      .eq("user_id", currentUser.id)
+      .limit(1);
+
+  if (error) {
+    showMessage(error.message);
+    return;
+  }
+
+  if (!data || data.length === 0) {
+
+    showScreen("householdScreen");
+
+    showMessage(
+      "Create a new U&me space or join your partner's space."
+    );
+
+    return;
+  }
+
+  const membership = data[0];
+
+  currentHousehold =
+    membership.households;
+
+  document.getElementById("welcomeText")
+    .textContent =
+    "Welcome, " + membership.display_name;
+
+  document.getElementById("householdName")
+    .textContent =
+    currentHousehold.name;
+
+  document.getElementById("myInviteCode")
+    .textContent =
+    currentHousehold.invite_code;
+
+  showScreen("homeScreen");
+}
+
+
+async function createHousehold() {
+
+  const name =
+    document.getElementById("displayName")
+      .value.trim();
+
+  if (!name) {
+    showMessage("Enter your name.");
+    return;
+  }
+
+  showMessage("Creating your U&me space...");
+
+  const inviteCode =
+    Math.random()
+      .toString(36)
+      .substring(2, 8)
+      .toUpperCase();
+
+  const { data: household, error } =
+    await supabaseClient
+      .from("households")
+      .insert({
+        name: "U&me",
+        invite_code: inviteCode,
+        created_by: currentUser.id
+      })
+      .select()
+      .single();
+
+  if (error) {
+    showMessage(error.message);
+    return;
+  }
+
+  const { error: memberError } =
+    await supabaseClient
+      .from("household_members")
+      .insert({
+        household_id: household.id,
+        user_id: currentUser.id,
+        display_name: name,
+        role: "owner"
+      });
+
+  if (memberError) {
+    showMessage(memberError.message);
+    return;
+  }
+
+  currentHousehold = household;
+
+  document.getElementById("welcomeText")
+    .textContent =
+    "Welcome, " + name;
+
+  document.getElementById("householdName")
+    .textContent =
+    household.name;
+
+  document.getElementById("myInviteCode")
+    .textContent =
+    household.invite_code;
+
+  showScreen("homeScreen");
+
+  showMessage("Your U&me space is ready!");
+}
+
+
+async function joinHousehold() {
+
+  const name =
+    document.getElementById("joinName")
+      .value.trim();
+
+  const code =
+    document.getElementById("inviteCode")
+      .value.trim()
+      .toUpperCase();
+
+  if (!name || !code) {
+    showMessage("Enter your name and invite code.");
+    return;
+  }
+
+  showMessage("Joining U&me space...");
+
+  const { data, error } =
+    await supabaseClient.rpc(
+      "join_household_by_invite_code",
+      {
+        p_invite_code: code,
+        p_display_name: name
+      }
+    );
+
+  if (error) {
+    showMessage(error.message);
+    return;
+  }
+
+  currentHousehold = {
+    id: data.household_id,
+    name: data.household_name,
+    invite_code: code
+  };
+
+  document.getElementById("welcomeText")
+    .textContent =
+    "Welcome, " + name;
+
+  document.getElementById("householdName")
+    .textContent =
+    data.household_name;
+
+  document.getElementById("myInviteCode")
+    .textContent =
+    code;
+
+  showScreen("homeScreen");
+
+  showMessage("You joined the U&me space!");
+}
+
+
+async function copyInviteCode() {
+
+  const code =
+    document.getElementById("myInviteCode")
+      .textContent;
+
+  await navigator.clipboard.writeText(code);
+
+  showMessage("Invite code copied!");
+}
+
+
+async function logout() {
+
+  await supabaseClient.auth.signOut();
+
+  currentUser = null;
+  currentHousehold = null;
+
+  showScreen("authScreen");
+
+  showMessage("Logged out.");
+}
+
+
+supabaseClient.auth.onAuthStateChange(
+  async (event, session) => {
+
+    if (session && session.user) {
+
+      currentUser = session.user;
+
+      setTimeout(
+        () => loadUserState(),
+        0
+      );
+
+    } else {
+
+      showScreen("authScreen");
+
+    }
+  }
+);
 
 </script>
 
