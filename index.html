@@ -1,48 +1,75 @@
-<!-- BUDGET MODAL -->
-<div id="budgetModal" class="modal hidden">
+function openBudgetModal() {
 
-  <div class="modal-card">
+  document
+    .getElementById("budgetModal")
+    .classList.remove("hidden");
 
-    <h2>Add monthly budget</h2>
+}
 
-    <div class="card-subtitle">
-      Set the maximum amount you want to spend on a category this month.
-    </div>
 
-    <select id="budgetCategory">
-      <option value="Food">Food</option>
-      <option value="Transport">Transport</option>
-      <option value="Home">Home</option>
-      <option value="Shopping">Shopping</option>
-      <option value="Bills">Bills</option>
-      <option value="Entertainment">Entertainment</option>
-      <option value="Health">Health</option>
-      <option value="Family">Family</option>
-      <option value="Other">Other</option>
-    </select>
+function closeBudgetModal() {
 
-    <input
-      id="budgetAmount"
-      type="number"
-      min="0"
-      placeholder="Monthly budget amount"
-    >
+  document
+    .getElementById("budgetModal")
+    .classList.add("hidden");
 
-    <div class="modal-actions">
+}
 
-      <button
-        class="secondary"
-        onclick="closeBudgetModal()"
-      >
-        Cancel
-      </button>
 
-      <button onclick="addBudget()">
-        Save budget
-      </button>
+async function addBudget() {
 
-    </div>
+  const category =
+    document
+      .getElementById("budgetCategory")
+      .value;
 
-  </div>
+  const amount =
+    Number(
+      document
+        .getElementById("budgetAmount")
+        .value
+    );
 
-</div>
+  if (!amount || amount <= 0) {
+
+    alert("Enter a valid budget amount.");
+
+    return;
+  }
+
+  const { error } =
+    await supabaseClient
+      .from("budgets")
+      .upsert({
+        household_id:
+          currentHousehold.id,
+
+        category,
+
+        amount,
+
+        month:
+          document
+            .getElementById("monthPicker")
+            .value + "-01"
+      }, {
+        onConflict:
+          "household_id,category,month"
+      });
+
+  if (error) {
+
+    alert(error.message);
+
+    return;
+  }
+
+  document.getElementById(
+    "budgetAmount"
+  ).value = "";
+
+  closeBudgetModal();
+
+  await refreshData();
+
+}
