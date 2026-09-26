@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -196,6 +197,8 @@
     .top-actions {
       display: flex;
       gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     .top-actions button {
@@ -510,6 +513,101 @@
       flex: 1;
     }
 
+    /* RESET DATA */
+
+    .reset-modal-card {
+      width: min(460px, 100%);
+      background: white;
+      border-radius: 22px;
+      padding: 25px;
+    }
+
+    .reset-warning {
+      background: #fff5f5;
+      border: 1px solid #ffd7d7;
+      color: #a61b1b;
+      border-radius: 14px;
+      padding: 13px;
+      margin-bottom: 18px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .reset-options {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .reset-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid #e5e5e5;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: .15s;
+    }
+
+    .reset-option:hover {
+      background: #f8f8f8;
+    }
+
+    .reset-option input {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      flex-shrink: 0;
+      accent-color: #111;
+    }
+
+    .reset-option-text {
+      flex: 1;
+    }
+
+    .reset-option-title {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .reset-option-description {
+      color: #888;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .reset-select-actions {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    .reset-select-actions button {
+      flex: 1;
+      padding: 9px 10px;
+      font-size: 12px;
+    }
+
+    .reset-confirm-box {
+      background: #f5f5f5;
+      border-radius: 12px;
+      padding: 12px;
+      color: #555;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 15px;
+    }
+
+    .danger-confirm {
+      background: #e5484d;
+      color: white;
+    }
+
+    .danger-confirm:hover {
+      background: #c9363b;
+    }
+
     /* MOBILE */
 
     @media (max-width: 850px) {
@@ -570,6 +668,14 @@
 
       .form-grid .full {
         grid-column: auto;
+      }
+
+      .top-actions {
+        gap: 5px;
+      }
+
+      .top-actions button {
+        font-size: 11px;
       }
     }
   </style>
@@ -645,13 +751,19 @@
         </div>
 
         <div class="top-actions">
+
           <button class="secondary" onclick="openGoalModal()">
             + Goal
+          </button>
+
+          <button class="secondary" onclick="openResetModal()">
+            🗑️ Data
           </button>
 
           <button class="secondary" onclick="logout()">
             Log out
           </button>
+
         </div>
 
       </div>
@@ -913,6 +1025,144 @@
         <button onclick="addGoal()">
           Create goal
         </button>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- RESET DATA MODAL -->
+  <div id="resetModal" class="modal hidden">
+
+    <div class="reset-modal-card">
+
+      <h2>Manage data</h2>
+
+      <div class="card-subtitle">
+        Choose exactly what you want to delete.
+      </div>
+
+      <div class="reset-warning">
+        ⚠️ Deleted data cannot be recovered from the app.
+        Your account, shared space and invite code will NOT be deleted.
+      </div>
+
+      <div class="reset-select-actions">
+
+        <button
+          class="secondary"
+          onclick="selectAllResetOptions()"
+        >
+          Select all
+        </button>
+
+        <button
+          class="secondary"
+          onclick="clearAllResetOptions()"
+        >
+          Clear all
+        </button>
+
+      </div>
+
+      <div class="reset-options">
+
+        <label class="reset-option">
+
+          <input
+            type="checkbox"
+            id="resetIncome"
+            onchange="updateResetSummary()"
+          >
+
+          <div class="reset-option-text">
+
+            <div class="reset-option-title">
+              Income
+            </div>
+
+            <div class="reset-option-description">
+              Delete all income records.
+            </div>
+
+          </div>
+
+        </label>
+
+
+        <label class="reset-option">
+
+          <input
+            type="checkbox"
+            id="resetExpenses"
+            onchange="updateResetSummary()"
+          >
+
+          <div class="reset-option-text">
+
+            <div class="reset-option-title">
+              Expenses
+            </div>
+
+            <div class="reset-option-description">
+              Delete all expense records.
+            </div>
+
+          </div>
+
+        </label>
+
+
+        <label class="reset-option">
+
+          <input
+            type="checkbox"
+            id="resetGoals"
+            onchange="updateResetSummary()"
+          >
+
+          <div class="reset-option-text">
+
+            <div class="reset-option-title">
+              Saving goals
+            </div>
+
+            <div class="reset-option-description">
+              Delete all goals and their saving contributions.
+            </div>
+
+          </div>
+
+        </label>
+
+      </div>
+
+
+      <div
+        id="resetSummary"
+        class="reset-confirm-box"
+      >
+        Nothing selected.
+      </div>
+
+
+      <div class="modal-actions">
+
+        <button
+          class="secondary"
+          onclick="closeResetModal()"
+        >
+          Cancel
+        </button>
+
+        <button
+          class="danger-confirm"
+          onclick="resetSelectedData()"
+        >
+          Delete selected
+        </button>
+
       </div>
 
     </div>
@@ -1664,6 +1914,309 @@
 
 
   /* =========================
+     RESET / DELETE DATA
+  ========================= */
+
+  function openResetModal() {
+
+    clearAllResetOptions();
+
+    document
+      .getElementById("resetModal")
+      .classList.remove("hidden");
+
+    updateResetSummary();
+  }
+
+
+  function closeResetModal() {
+
+    document
+      .getElementById("resetModal")
+      .classList.add("hidden");
+  }
+
+
+  function selectAllResetOptions() {
+
+    document.getElementById("resetIncome").checked =
+      true;
+
+    document.getElementById("resetExpenses").checked =
+      true;
+
+    document.getElementById("resetGoals").checked =
+      true;
+
+    updateResetSummary();
+  }
+
+
+  function clearAllResetOptions() {
+
+    document.getElementById("resetIncome").checked =
+      false;
+
+    document.getElementById("resetExpenses").checked =
+      false;
+
+    document.getElementById("resetGoals").checked =
+      false;
+
+    updateResetSummary();
+  }
+
+
+  function getSelectedResetItems() {
+
+    const selected = [];
+
+    if (
+      document.getElementById("resetIncome").checked
+    ) {
+      selected.push("Income");
+    }
+
+    if (
+      document.getElementById("resetExpenses").checked
+    ) {
+      selected.push("Expenses");
+    }
+
+    if (
+      document.getElementById("resetGoals").checked
+    ) {
+      selected.push("Saving goals");
+    }
+
+    return selected;
+  }
+
+
+  function updateResetSummary() {
+
+    const selected =
+      getSelectedResetItems();
+
+    const summary =
+      document.getElementById("resetSummary");
+
+    if (!selected.length) {
+
+      summary.textContent =
+        "Nothing selected.";
+
+      return;
+    }
+
+    summary.innerHTML =
+      "<strong>Selected:</strong> " +
+      selected
+        .map(item => escapeHtml(item))
+        .join(", ") +
+      "<br><br>This data will be permanently deleted from your shared space.";
+  }
+
+
+  async function resetSelectedData() {
+
+    if (!currentHousehold) {
+
+      alert(
+        "No shared space is currently selected."
+      );
+
+      return;
+    }
+
+
+    const deleteIncome =
+      document.getElementById("resetIncome").checked;
+
+    const deleteExpenses =
+      document.getElementById("resetExpenses").checked;
+
+    const deleteGoals =
+      document.getElementById("resetGoals").checked;
+
+
+    if (
+      !deleteIncome &&
+      !deleteExpenses &&
+      !deleteGoals
+    ) {
+
+      alert(
+        "Please select at least one type of data to delete."
+      );
+
+      return;
+    }
+
+
+    const selected =
+      getSelectedResetItems();
+
+
+    const confirmed =
+      confirm(
+        "Are you sure you want to delete:\n\n" +
+        selected.join("\n") +
+        "\n\nThis action cannot be undone."
+      );
+
+
+    if (!confirmed) {
+      return;
+    }
+
+
+    try {
+
+      /* DELETE INCOME */
+
+      if (deleteIncome) {
+
+        const {
+          error
+        } =
+          await supabaseClient
+            .from("incomes")
+            .delete()
+            .eq(
+              "household_id",
+              currentHousehold.id
+            );
+
+        if (error) {
+          throw new Error(
+            "Income: " + error.message
+          );
+        }
+      }
+
+
+      /* DELETE EXPENSES */
+
+      if (deleteExpenses) {
+
+        const {
+          error
+        } =
+          await supabaseClient
+            .from("expenses")
+            .delete()
+            .eq(
+              "household_id",
+              currentHousehold.id
+            );
+
+        if (error) {
+          throw new Error(
+            "Expenses: " + error.message
+          );
+        }
+      }
+
+
+      /* DELETE GOALS */
+
+      if (deleteGoals) {
+
+        /*
+          First get all goals belonging
+          to this household.
+        */
+
+        const {
+          data: householdGoals,
+          error: goalsFetchError
+        } =
+          await supabaseClient
+            .from("goals")
+            .select("id")
+            .eq(
+              "household_id",
+              currentHousehold.id
+            );
+
+        if (goalsFetchError) {
+          throw new Error(
+            "Goals: " +
+            goalsFetchError.message
+          );
+        }
+
+
+        /*
+          Delete contributions first
+          because they belong to goals.
+        */
+
+        const {
+          error: contributionDeleteError
+        } =
+          await supabaseClient
+            .from("goal_contributions")
+            .delete()
+            .eq(
+              "household_id",
+              currentHousehold.id
+            );
+
+        if (contributionDeleteError) {
+          throw new Error(
+            "Goal contributions: " +
+            contributionDeleteError.message
+          );
+        }
+
+
+        /*
+          Delete the goals themselves.
+        */
+
+        const {
+          error: goalDeleteError
+        } =
+          await supabaseClient
+            .from("goals")
+            .delete()
+            .eq(
+              "household_id",
+              currentHousehold.id
+            );
+
+        if (goalDeleteError) {
+          throw new Error(
+            "Goals: " +
+            goalDeleteError.message
+          );
+        }
+      }
+
+
+      closeResetModal();
+
+      alert(
+        "✅ Selected data was deleted successfully."
+      );
+
+      await refreshData();
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "❌ Could not delete the selected data.\n\n" +
+        error.message
+      );
+    }
+  }
+
+
+  /* =========================
      LOAD DATA
   ========================= */
 
@@ -2242,3 +2795,4 @@
 
 </body>
 </html>
+```
