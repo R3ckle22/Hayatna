@@ -1,0 +1,19 @@
+index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>U&me</title>
+</head>
+<body>
+
+  <h1>U&me</h1>
+  <p>Our shared space</p>
+
+  <button onclick="alert('U&me is working!')">
+    Test App
+  </button>
+
+</body>
+</html>
